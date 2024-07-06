@@ -3,83 +3,134 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use GuzzleHttp\Exception\ClientException;
-use Illuminate\Http\JsonResponse;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Services\SocialAccountsService;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    public const PROVIDERS = ['github', 'google'];
+
     /**
-     * Redirect the user to the Provider authentication page.
+     * Register api
      *
-     * @param string $provider
-     * @return JsonResponse
+     * @return \Illuminate\Http\Response
      */
-    public function redirectToProvider($provider): JsonResponse
+    public function register(Request $request)
     {
-        $validated = $this->validateProvider($provider);
-        if ($validated !== null) {
-            return $validated;
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|confirmed|min:8',
+            'password_confirmation' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $redirectUrl = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
-        return response()->json(['url' => $redirectUrl]);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return $this->respondWithMessage('User register successfully.');
     }
 
     /**
-     * Obtain the user information from Provider.
+     * Login api
      *
-     * @param string $provider
-     * @return JsonResponse
+     * @return \Illuminate\Http\Response
      */
-    public function handleProviderCallback($provider): JsonResponse
+    public function login(Request $request)
     {
-        $validated = $this->validateProvider($provider);
-        if ($validated !== null) {
-            return $validated;
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $token =  $user->createToken(env('API_AUTH_TOKEN_PASSPORT'))->accessToken;
+            return $this->respondWithToken($token);
+        } else {
+            return $this->sendError(self::UNAUTHORIZED, null, ['error' => 'Unauthorised']);
         }
+    }
+
+    /**
+     * Session api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function session(Request $request)
+    {
+        $user = Auth::user();
+        return $this->sendResponse($user, 'succes');
+    }
+
+    /**
+     * Logout api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        $token = $request->user()->token();
+        $token->revoke();
+
+        return $this->respondWithMessage('Logout successfully.');
+    }
+
+    private function respondWithToken($token)
+    {
+        $success['token'] =  $token;
+        $success['access_type'] = 'bearer';
+        $success['expires_in'] = now()->addDays(1);
+
+        return $this->sendResponse($success, 'Login successfully.');
+    }
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function redirectToProvider($provider)
+    {
+        if (!in_array($provider, self::PROVIDERS)) {
+            return $this->sendError(self::NOT_FOUND);
+        }
+
+        $success['provider_redirect'] = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+
+        return $this->sendResponse($success, "Provider '" . $provider . "' redirect url.");
+    }
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function handleProviderCallback($provider)
+    {
+        if (!in_array($provider, self::PROVIDERS)) {
+            return $this->sendError(self::NOT_FOUND);
+        }
+
         try {
-            $user = Socialite::driver($provider)->stateless()->user();
-        } catch (ClientException $exception) {
-            return response()->json(['error' => 'Invalid credentials provided.'], 422);
+            $providerUser = Socialite::driver($provider)->stateless()->user();
+
+            if ($providerUser) {
+                $user = (new SocialAccountsService())->findOrCreate($providerUser, $provider);
+
+                $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
+
+                return $this->respondWithToken($token);
+                //return redirect('https://my-frontend-domain.com/dashboard?access_token='.$token);
+            }
+        } catch (Exception $e) {
+            return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
         }
-
-        $userCreated = User::firstOrCreate(
-            [
-                'email' => $user->getEmail() ?? $user->getNickname()
-            ],
-            [
-                'email_verified_at' => now(),
-                'name' => $user->getName(),
-                'status' => true,
-            ]
-        );
-        $userCreated->providers()->updateOrCreate(
-            [
-                'provider' => $provider,
-                'provider_id' => $user->getId(),
-            ],
-            [
-                'avatar' => $user->getAvatar()
-            ]
-        );
-        $token = $userCreated->createToken('token-name')->plainTextToken;
-
-        return response()->json($userCreated, 200, ['Access-Token' => $token]);
-    }
-
-    /**
-     * Validate the provider.
-     *
-     * @param string $provider
-     * @return JsonResponse|null
-     */
-    protected function validateProvider($provider): ?JsonResponse
-    {
-        if (!in_array($provider, ['facebook', 'github', 'google'])) {
-            return response()->json(['error' => 'Please login using facebook, github or google'], 422);
-        }
-        return null;
     }
 }

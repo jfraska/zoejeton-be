@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('providers', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('provider');
+        Schema::create('social_accounts', function (Blueprint $table) {
+            $table->id();
             $table->string('provider_id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->string('provider_name');
+            $table->unsignedBigInteger('user_id');
+            $table->string('name');
+            $table->string('email')->nullable();
+            $table->string('username')->nullable();
             $table->string('avatar')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('providers');
+        Schema::dropIfExists('social_accounts');
     }
 };

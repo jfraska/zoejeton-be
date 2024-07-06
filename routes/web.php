@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Socialite\Facades\Socialite;
+
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +15,15 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/login/{provider}', [AuthController::class, 'redirectToProvider']);
-Route::get('/login/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
+Route::get('/auth/redirect/{provider}', [AuthController::class, 'redirectToProvider']);
+Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+
+Route::get('/auth/check', [AuthController::class, 'session'])->middleware('auth:api');
+
+
+Route::prefix('v1')->middleware('auth:api')->group(function () {
+});
