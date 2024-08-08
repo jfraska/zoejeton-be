@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\TemplateController;
 
@@ -31,13 +32,16 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
     Route::group(['prefix' => 'invitation'], function () {
         Route::get('/', [InvitationController::class, 'index']);
         Route::post('/', [InvitationController::class, 'store']);
-        // Route::delete('/', [App\Http\Controllers\PurchaseOrderController::class, 'destroy'])->middleware('apimid:purchaseOrder:destroy');
-        // Route::get('/show', [App\Http\Controllers\PurchaseOrderController::class, 'show'])->middleware('apimid:purchaseOrder:show');
+        Route::get('/{id}', [InvitationController::class, 'show']);
     });
     Route::group(['prefix' => 'template'], function () {
         Route::get('/', [TemplateController::class, 'index']);
         Route::post('/', [TemplateController::class, 'store']);
-        // Route::delete('/', [App\Http\Controllers\PurchaseOrderController::class, 'destroy'])->middleware('apimid:purchaseOrder:destroy');
-        // Route::get('/show', [App\Http\Controllers\PurchaseOrderController::class, 'show'])->middleware('apimid:purchaseOrder:show');
+        Route::get('/{slug}', [TemplateController::class, 'show']);
+    });
+    Route::group(['prefix' => 'guest'], function () {
+        Route::get('/', [GuestController::class, 'index']);
+        Route::post('/', [GuestController::class, 'store']);
+        Route::get('/{slug}', [GuestController::class, 'show']);
     });
 });

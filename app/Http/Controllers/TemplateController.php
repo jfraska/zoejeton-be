@@ -20,14 +20,6 @@ class TemplateController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -72,17 +64,15 @@ class TemplateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($slug)
     {
-        //
-    }
+        $template = $this->getData($slug);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        if ($template == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $this->sendResponse($template ,'Template successfully loaded.');
     }
 
     /**
@@ -99,5 +89,10 @@ class TemplateController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    protected function getData($slug)
+    {
+        return Template::where('slug', $slug)->first();
     }
 }

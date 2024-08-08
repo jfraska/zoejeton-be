@@ -23,14 +23,15 @@ class InvitationController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created resource in storage.
      */
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'id' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'subdomain' => 'required|string|max:255|unique:invitations',
-            'templateId' => 'required|integer|unique:templates',
+            'templateId' => 'nullable|integer|exists:templates,id',
         ]);
 
         if ($validator->fails()) {
@@ -38,6 +39,7 @@ class InvitationController extends Controller
         }
 
         $invitation = Invitation::create([
+            'id' => $request->id,
             'title' => $request->title,
             'subdomain' => $request->subdomain,
             'userId' => Auth()->user()->id,
@@ -48,27 +50,17 @@ class InvitationController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreInvitationRequest $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
-    public function show(Invitation $invitation)
+    public function show($id)
     {
-        //
-    }
+        $invitation = $this->getData($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invitation $invitation)
-    {
-        //
+        if ($invitation == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $this->sendResponse($invitation ,'Invitation successfully loaded.');
     }
 
     /**
@@ -85,5 +77,11 @@ class InvitationController extends Controller
     public function destroy(Invitation $invitation)
     {
         //
+    }
+
+    protected function getData($id)
+    {
+
+        return Invitation::with('payment')->where('id', $id)->first();
     }
 }
