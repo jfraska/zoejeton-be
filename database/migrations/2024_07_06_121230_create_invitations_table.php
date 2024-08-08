@@ -12,14 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invitations', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->unsignedBigInteger('id')->primary();
             $table->string('title');
-            $table->string('userId');
-            $table->string('templateId')->unique()->nullable();
-            $table->json('fitur');
-            $table->json('addon');
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->string('subdomain')->unique();
+            $table->unsignedBigInteger('userId');
+            $table->unsignedBigInteger('templateId')->unique()->nullable();
+            $table->timestamps();
 
             // Definisikan foreign key dan relasi
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');

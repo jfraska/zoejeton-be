@@ -28,7 +28,7 @@ class Controller extends BaseController
      * @param  str  $message
      * @return \Illuminate\Http\Response
      */
-    public function sendResponse($result = [], $message = NULL)
+    public function sendResponse($result = [], $message = null)
     {
         $response = [
             'success' => true,
@@ -42,10 +42,32 @@ class Controller extends BaseController
     /**
      * success response method.
      *
+     * @param  object  $result
      * @param  str  $message
      * @return \Illuminate\Http\Response
      */
-    public function respondWithMessage($message = NULL)
+    public function sendResponseWithMeta($result, $message )
+    {
+        $response = [
+            'success' => true,
+            'data'    => $result->items(),
+            'meta' => [
+                'next_page' => ($result->nextCursor() != null) ? $result->nextCursor()->encode() : null,
+                'prev_page' => ($result->previousCursor() != null) ? $result->previousCursor()->encode() : null,
+            ],
+            'message' => $message,
+        ];
+
+        return response()->json($response, self::SUCCESS);
+    }
+
+    /**
+     * success response method.
+     *
+     * @param  str  $message
+     * @return \Illuminate\Http\Response
+     */
+    public function respondWithMessage($message = null)
     {
         return response()->json(['success' => true, 'message' => $message], self::SUCCESS);
     }
@@ -58,7 +80,7 @@ class Controller extends BaseController
      * @param  array  $errorMessages
      * @return \Illuminate\Http\Response
      */
-    public function sendError($code = NULL, $error = NULL, $errorMessages = [])
+    public function sendError($code = null, $error = null, $errorMessages = [])
     {
         $response['success'] = false;
 

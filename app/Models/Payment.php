@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Invitation extends Model
+class Payment extends Model
 {
     use HasFactory;
 
     // Tentukan nama tabel jika berbeda dari konvensi penamaan
-    protected $table = 'invitations';
+    protected $table = 'payments';
 
     // Tentukan primary key jika berbeda dari konvensi penamaan
     protected $primaryKey = 'id';
@@ -24,34 +24,19 @@ class Invitation extends Model
     // Tentukan atribut yang boleh diisi mass-assign
     protected $fillable = [
         'id',
-        'title',
-        'subdomain',
-        'userId',
-        'templateId',
+        'invitationId',
+        'desc',
+        'items',
+        'discount',
+        'total',
+        'status',
     ];
 
     // Tentukan atribut yang tidak boleh diisi mass-assign
     protected $guarded = [];
 
-    // Definisikan relasi dengan model User
-    public function user()
+    public function invitation()
     {
-        return $this->belongsTo(User::class, 'userId', 'id');
-    }
-
-    // Definisikan relasi dengan model Template
-    public function template()
-    {
-        return $this->belongsTo(Template::class, 'templateId', 'id');
-    }
-
-    public function payment()
-    {
-        return $this->hasMany(Payment::class, 'invitationId', 'id');
-    }
-
-    public function guest()
-    {
-        return $this->hasMany(Guest::class, 'invitationId', 'id');
+        return $this->belongsTo(Invitation::class, 'invitationId', 'id');
     }
 }
