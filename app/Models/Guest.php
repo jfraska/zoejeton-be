@@ -9,9 +9,6 @@ class Guest extends Model
 {
     use HasFactory;
 
-    // Tentukan nama tabel jika berbeda dari konvensi penamaan
-    protected $table = 'payments';
-
     // Tentukan primary key jika berbeda dari konvensi penamaan
     protected $primaryKey = 'id';
 

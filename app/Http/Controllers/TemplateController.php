@@ -78,9 +78,44 @@ class TemplateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'thumbnail' => 'required|string|max:255',
+            'price' => 'required|integer',
+            'category' => 'required|string|max:255',
+            'music' => 'required|string|max:255',
+            'slug' => 'required|string|max:255',
+            'parent' => 'nullable|string|max:255',
+            'discount' => 'nullable|integer',
+            'content' => 'required|array',
+            'color' => 'required|array',
+            // 'meta' => 'nullable|json',
+            'published' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
+        $template = $this->getData($request->id);
+
+        $template->update([
+            'title' => $request->title,
+            'parent' => $request->parent,
+            'thumbnail' => $request->thumbnail,
+            'price' => $request->price,
+            'discount' => $request->discount,
+            'category' => $request->category,
+            'content' => $request->content,
+            'color' => $request->color,
+            'music' => $request->music,
+            'meta' => $request->meta,
+            'published' => $request->published,
+        ]);
+
+        return $this->sendResponse($template ,'Template successfully updated.');
     }
 
     /**
@@ -91,8 +126,8 @@ class TemplateController extends Controller
         //
     }
 
-    protected function getData($slug)
+    protected function getData($id)
     {
-        return Template::where('slug', $slug)->first();
+        return Template::where('slug', $id)->orWhere('id', $id)->first();
     }
 }

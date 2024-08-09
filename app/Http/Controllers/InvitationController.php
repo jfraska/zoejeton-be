@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invitation;
-use App\Http\Requests\StoreInvitationRequest;
-use App\Http\Requests\UpdateInvitationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class InvitationController extends Controller
@@ -66,9 +63,29 @@ class InvitationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateInvitationRequest $request, Invitation $invitation)
+    public function update(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'subdomain' => 'required|string|max:255|unique:invitations',
+            'templateId' => 'nullable|integer|exists:templates,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
+        $invitation = $this->getData($request->id);
+
+        $invitation->update([
+            'title' => $request->title,
+            'subdomain' => $request->subdomain,
+            'userId' => Auth()->user()->id,
+            'templateId' => $request->templateId,
+        ]);
+
+        return $this->sendResponse($invitation ,'Invitation successfully updated.');
     }
 
     /**
