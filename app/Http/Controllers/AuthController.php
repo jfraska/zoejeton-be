@@ -126,8 +126,14 @@ class AuthController extends Controller
 
                 $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
 
-                return $this->respondWithToken($token);
+                // return $this->respondWithToken($token);
                 //return redirect('https://my-frontend-domain.com/dashboard?access_token='.$token);
+
+                $domain = env('FRONTEND_URL');
+                return "<script>
+                    window.opener.postMessage({ token: '$token' }, '$domain');
+                    window.close();
+                </script>";
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
