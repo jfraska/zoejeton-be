@@ -129,9 +129,9 @@ class AuthController extends Controller
                 // return $this->respondWithToken($token);
                 //return redirect('https://my-frontend-domain.com/dashboard?access_token='.$token);
 
-                $domain = env('FRONTEND_URL');
+                // $domain = env('FRONTEND_URL');
                 return "<script>
-                    window.opener.postMessage({ token: '$token' }, '$domain');
+                    window.opener.postMessage({ token: '$token' }, '*');
                     window.close();
                 </script>";
             }
