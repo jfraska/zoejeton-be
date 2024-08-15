@@ -65,8 +65,8 @@ class AuthController extends Controller
      */
     public function session(Request $request)
     {
-        $user = Auth::user();
-        return $this->sendResponse($user, 'succes');
+        $user = Auth::user()->load('linkedSocialAccounts');
+        return $this->sendResponse(['user' => $user], 'succes');
     }
 
     /**
