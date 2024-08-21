@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class GuestController extends Controller
 {
@@ -13,8 +14,7 @@ class GuestController extends Controller
      */
     public function index(Request $request)
     {
-        $guest = Guest::orderBy('created_at', 'desc')
-            ->cursorPaginate($request->input('per_page', 15));
+        $guest = Guest::filter()->sort()->orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($guest, 'get guest successfull');
     }
@@ -25,13 +25,14 @@ class GuestController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            '*.id' => 'required|string|max:255',
             '*.invitationId' => 'required|string|max:255|exists:invitations,id',
-            '*.no' => 'required|string|max:255',
             '*.name' => 'required|string|max:255',
-            // '*.additional' => 'nullable|json',
-            // '*.sosmed' => 'nullable|json',
-            // '*.attended' => 'nullable|json',
+            '*.code' => 'required|string|max:255',
+            '*.address' => 'nullable|string|max:255',
+            '*.category' => 'nullable|integer',
+            '*.status' => 'nullable|integer',
+            '*.sosmed' => 'nullable|array',
+            '*.attended' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -41,11 +42,13 @@ class GuestController extends Controller
         $guests = [];
         foreach ($request->all() as $guest) {
             $guests[] = [
-                'id' => $guest['id'],
+                'id' =>  Str::orderedUuid(),
                 'invitationId' => $guest['invitationId'],
                 'name' => $guest['name'],
-                'no' => $guest['no'],
-                'additional' => json_encode($guest['additional'] ?? []),
+                'code' => $guest['code'],
+                'address' => $guest['address'],
+                'category' => $guest['category'],
+                'status' => $guest['status'],
                 'sosmed' => json_encode($guest['sosmed'] ?? []),
                 'attended' => json_encode($guest['attended'] ?? []),
             ];
@@ -64,10 +67,6 @@ class GuestController extends Controller
     {
         $guest = $this->getData($id);
 
-        if ($guest == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
-
         return $this->sendResponse($guest, 'Guest successfully loaded.');
     }
 
@@ -77,13 +76,14 @@ class GuestController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|string|max:255',
             'invitationId' => 'required|string|max:255',
-            'no' => 'required|string|max:255',
+            'code' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            // 'additional' => 'nullable|json',
-            // 'sosmed' => 'nullable|json',
-            // 'attended' => 'nullable|json',
+            'address' => 'nullable|string|max:255',
+            'category' => 'nullable|integer',
+            'status' => 'nullable|integer',
+            'sosmed' => 'nullable|array',
+            'attended' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
@@ -92,15 +92,14 @@ class GuestController extends Controller
 
         $guest = $this->getData($request->id);
 
-        $guest->update([
-            'id' => $request->id,
-            'invitationId' => $request->invitationId,
-            'no' => $request->no,
-            'name' => $request->name,
-            'additional' => $request->additional,
-            'sosmed' => $request->sosmed,
-            'attended' => $request->attended,
-        ]);
+        $guest->invitationId = $request->invitationId;
+        $guest->code = $request->code;
+        $guest->address = $request->address;
+        $guest->category = $request->category;
+        $guest->status = $request->status;
+        $guest->sosmed = json_encode($request->sosmed ?? []);
+        $guest->attended = json_encode($request->attended ?? []);
+        $guest->save();
 
         return $this->sendResponse($guest, 'Guest successfully updated.');
     }
@@ -112,17 +111,19 @@ class GuestController extends Controller
     {
         $guest = $this->getData($request->id);
 
-        if ($guest == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
-
         $guest->delete();
 
-        return $this->sendResponse($guest ,'Guest successfully deleted.');
+        return $this->sendResponse($guest, 'Guest successfully deleted.');
     }
 
     protected function getData($id)
     {
-        return Guest::where('id', $id)->first();
+        $guest =  Guest::find($id);
+
+        if ($guest == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $guest;
     }
 }

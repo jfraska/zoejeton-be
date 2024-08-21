@@ -12,18 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->string('invitationId')->unique();
-            $table->string('desc');
-            $table->json('items');
-            $table->integer('discount')->default(0);
+            $table->uuid('id')->primary();
+            $table->string('desc')->nullable();
+            $table->json('items')->nullable();
+            $table->integer('discount');
             $table->integer('total');
-            $table->integer('status')->default(0);
+            $table->integer('status');
             $table->timestamps();
 
-            $table->foreign('invitationId')->references('id')->on('invitations')->onDelete('cascade');
-
-            $table->index('invitationId');
+            $table->foreignUuid('subscriptionId')->references('id')->on('subscriptions')->onDelete('cascade');
         });
     }
 

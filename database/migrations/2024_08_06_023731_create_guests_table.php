@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('guests', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('invitationId');
-            $table->string('no');
+            $table->uuid('id')->primary();
+            $table->string('code');
             $table->string('name');
-            $table->json('additional')->nullable();
+            $table->string('address')->nullable();
+            $table->integer('category')->nullable();
+            $table->integer('status')->default(0);
+
             $table->json('sosmed')->nullable();
             $table->json('attended')->nullable();
             $table->timestamps();
 
-            $table->foreign('invitationId')->references('id')->on('invitations')->onDelete('cascade');
-
-            $table->index('invitationId');
+            $table->foreignUuid('invitationId')->index()->references('id')->on('invitations')->onDelete('cascade');
         });
     }
 

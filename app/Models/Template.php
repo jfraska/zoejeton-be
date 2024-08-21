@@ -7,29 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Template extends Model
 {
-    // Tentukan atribut yang boleh diisi mass-assign
     protected $fillable = [
         'title',
         'slug',
+        'category',
         'parent',
         'thumbnail',
         'price',
         'discount',
-        'category',
+        'published',
         'content',
         'color',
         'music',
         'meta',
-        'published',
     ];
 
-    // Tentukan atribut yang tidak boleh diisi mass-assign
     protected $guarded = [];
 
     protected $casts = [
         'content' => 'array',
         'color' => 'array',
-        'meta' => 'json',
+        'meta' => 'array',
     ];
 
     public function invitations()

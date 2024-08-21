@@ -2,35 +2,31 @@
 
 namespace App\Models;
 
+use Abbasudo\Purity\Traits\Filterable;
+use Abbasudo\Purity\Traits\Sortable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Guest extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids, Filterable, Sortable;
 
-    // Tentukan primary key jika berbeda dari konvensi penamaan
-    protected $primaryKey = 'id';
-
-    // Jenis primary key
-    protected $keyType = 'string';
-
-    // Apakah primary key auto-increment (tidak berlaku untuk string)
-    public $incrementing = false;
-
-    // Tentukan atribut yang boleh diisi mass-assign
     protected $fillable = [
-        'id',
         'invitationId',
-        'no',
+        'code',
         'name',
-        'additional',
+        'status',
         'sosmed',
         'attended',
     ];
 
-    // Tentukan atribut yang tidak boleh diisi mass-assign
     protected $guarded = [];
+
+    protected $casts = [
+        'sosmed' => 'array',
+        'attended' => 'array',
+    ];
 
     public function invitation()
     {

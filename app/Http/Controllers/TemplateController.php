@@ -14,7 +14,7 @@ class TemplateController extends Controller
     public function index(Request $request)
     {
         $template = Template::orderBy('created_at', 'desc')
-        ->cursorPaginate($request->input('per_page', 15));
+            ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($template, 'get template successfull');
     }
@@ -58,7 +58,7 @@ class TemplateController extends Controller
             'published' => $request->published,
         ]);
 
-        return $this->sendResponse($template ,'Invitation successfully created.');
+        return $this->sendResponse($template, 'Invitation successfully created.');
     }
 
     /**
@@ -72,7 +72,7 @@ class TemplateController extends Controller
             return $this->sendError(self::UNPROCESSABLE, null);
         }
 
-        return $this->sendResponse($template ,'Template successfully loaded.');
+        return $this->sendResponse($template, 'Template successfully loaded.');
     }
 
     /**
@@ -115,7 +115,7 @@ class TemplateController extends Controller
             'published' => $request->published,
         ]);
 
-        return $this->sendResponse($template ,'Template successfully updated.');
+        return $this->sendResponse($template, 'Template successfully updated.');
     }
 
     /**

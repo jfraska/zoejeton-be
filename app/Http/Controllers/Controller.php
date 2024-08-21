@@ -21,13 +21,7 @@ class Controller extends BaseController
     public const BAD_REQUEST = 400;
     public const VALIDATION_ERROR = 252;
 
-    /**
-     * success response method.
-     *
-     * @param  array  $result
-     * @param  str  $message
-     * @return \Illuminate\Http\Response
-     */
+
     public function sendResponse($result = [], $message = null)
     {
         $response = [
@@ -39,21 +33,18 @@ class Controller extends BaseController
         return response()->json($response, self::SUCCESS);
     }
 
-    /**
-     * success response method.
-     *
-     * @param  object  $result
-     * @param  str  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function sendResponseWithMeta($result, $message )
+
+    public function sendResponseWithMeta($result, $message)
     {
         $response = [
             'success' => true,
             'data'    => $result->items(),
             'meta' => [
-                'next_page' => ($result->nextCursor() != null) ? $result->nextCursor()->encode() : null,
-                'prev_page' => ($result->previousCursor() != null) ? $result->previousCursor()->encode() : null,
+                'total' => $result->total(),
+                'current_page' => $result->currentPage(),
+                'last_page' => $result->lastPage(),
+                'next_page' => $result->nextPageUrl(),
+                'prev_page' => $result->previousPageUrl(),
             ],
             'message' => $message,
         ];
@@ -61,25 +52,13 @@ class Controller extends BaseController
         return response()->json($response, self::SUCCESS);
     }
 
-    /**
-     * success response method.
-     *
-     * @param  str  $message
-     * @return \Illuminate\Http\Response
-     */
+
     public function respondWithMessage($message = null)
     {
         return response()->json(['success' => true, 'message' => $message], self::SUCCESS);
     }
 
-    /**
-     * error response method.
-     *
-     * @param  int  $code
-     * @param  str  $error
-     * @param  array  $errorMessages
-     * @return \Illuminate\Http\Response
-     */
+
     public function sendError($code = null, $error = null, $errorMessages = [])
     {
         $response['success'] = false;
