@@ -13,10 +13,10 @@ class InvitationController extends Controller
      */
     public function index(Request $request)
     {
-        $invitation = Invitation::orderBy('created_at', 'desc')
-        ->cursorPaginate($request->input('per_page', 15));
+        $invitation = Invitation::filter()->sort()->orderBy('created_at', 'desc')
+            ->paginate($request->input('per_page', 15));
 
-        return $this->sendResponseWithMeta($invitation, 'get invitation successfull');
+        return $this->sendResponseWithMeta($invitation, "get invitation successfull");
     }
 
     /**
@@ -25,7 +25,6 @@ class InvitationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'id' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'subdomain' => 'required|string|max:255|unique:invitations',
             'templateId' => 'nullable|integer|exists:templates,id',
@@ -36,14 +35,13 @@ class InvitationController extends Controller
         }
 
         $invitation = Invitation::create([
-            'id' => $request->id,
             'title' => $request->title,
             'subdomain' => $request->subdomain,
             'userId' => Auth()->user()->id,
             'templateId' => $request->templateId,
         ]);
 
-        return $this->sendResponse($invitation ,'Invitation successfully created.');
+        return $this->sendResponse($invitation, 'Invitation successfully created.');
     }
 
     /**
@@ -57,7 +55,7 @@ class InvitationController extends Controller
             return $this->sendError(self::UNPROCESSABLE, null);
         }
 
-        return $this->sendResponse($invitation ,'Invitation successfully loaded.');
+        return $this->sendResponse($invitation, 'Invitation successfully loaded.');
     }
 
     /**
@@ -85,7 +83,7 @@ class InvitationController extends Controller
             'templateId' => $request->templateId,
         ]);
 
-        return $this->sendResponse($invitation ,'Invitation successfully updated.');
+        return $this->sendResponse($invitation, 'Invitation successfully updated.');
     }
 
     /**

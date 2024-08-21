@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TemplateController;
 
 /*
@@ -47,5 +48,12 @@ Route::prefix('v1')->middleware('auth:api')->group(function () {
         Route::get('/{slug}', [GuestController::class, 'show']);
         Route::patch('/', [GuestController::class, 'update']);
         Route::delete('/', [GuestController::class, 'destroy']);
+    });
+    Route::group(['prefix' => 'payment'], function () {
+        Route::get('/', [PaymentController::class, 'index']);
+        Route::post('/', [PaymentController::class, 'create']);
+        Route::post('/callback', [PaymentController::class, 'callback']);
+        Route::patch('/', [PaymentController::class, 'update']);
+        Route::delete('/', [PaymentController::class, 'destroy']);
     });
 });

@@ -2,35 +2,25 @@
 
 namespace App\Models;
 
+use Abbasudo\Purity\Traits\Filterable;
+use Abbasudo\Purity\Traits\Sortable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Invitation extends Model
+class Invitation extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia, HasUuids, Filterable, Sortable;
 
-    // Tentukan nama tabel jika berbeda dari konvensi penamaan
-    protected $table = 'invitations';
-
-    // Tentukan primary key jika berbeda dari konvensi penamaan
-    protected $primaryKey = 'id';
-
-    // Jenis primary key
-    protected $keyType = 'string';
-
-    // Apakah primary key auto-increment (tidak berlaku untuk string)
-    public $incrementing = false;
-
-    // Tentukan atribut yang boleh diisi mass-assign
     protected $fillable = [
-        'id',
         'title',
         'subdomain',
         'userId',
         'templateId',
     ];
 
-    // Tentukan atribut yang tidak boleh diisi mass-assign
     protected $guarded = [];
 
     // Definisikan relasi dengan model User
