@@ -24,7 +24,7 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['wedding', 'elegance', 'invitation']
                 ]),
                 'published' => true,
-                'template_id' => null,  // Assuming no template ID is available
+                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
@@ -36,7 +36,7 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['party', 'tropical', 'invitation']
                 ]),
                 'published' => true,
-                'template_id' => null,  // Assuming no template ID is available
+                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
@@ -48,7 +48,7 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['ceremony', 'classic', 'invitation']
                 ]),
                 'published' => false,
-                'template_id' => null,  // Assuming no template ID is available
+                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ]
         ];
