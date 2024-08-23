@@ -31,7 +31,7 @@ class PaymentController extends Controller
         $subscription = $this->getSubscription($id);
 
         $validator = Validator::make($request->all(), [
-            'subscriptionId' => 'required|exists:subscriptions,id',
+            'subscription_id' => 'required|exists:subscriptions,id',
             'desc' => 'nullable|string',
             'total' => 'required|numeric|min:1',
 
@@ -63,13 +63,11 @@ class PaymentController extends Controller
         Config::$is3ds = true;
 
         $payment = $subscription->payment()->create([
-            'userId' => Auth::id(),
+            'user_id' => Auth::id(),
             'desc' => $request->desc,
             'items' => $request->items,
             'total' => $request->total,
         ]);
-
-        dd($payment);
 
         $transaction_details = array(
             'order_id' => $payment->id,

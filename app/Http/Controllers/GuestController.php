@@ -31,6 +31,7 @@ class GuestController extends Controller
             '*.address' => 'nullable|string|max:255',
             '*.category' => 'nullable|integer',
             '*.status' => 'nullable|integer',
+            '*.group_id' => 'nullable|string|max:255|exists:groups,id',
             '*.sosmed' => 'nullable|array',
             '*.attended' => 'nullable|array',
         ]);
@@ -49,6 +50,7 @@ class GuestController extends Controller
                 'address' => $guest['address'] ?? null,
                 'category' => $guest['category'] ?? null,
                 'status' => $guest['status'] ?? 0,
+                'group_id' => $guest['group_id'] ?? null,
                 'sosmed' => isset($guest['sosmed']) ? json_encode($guest['sosmed']) : null,
                 'attended' => isset($guest['attended']) ? json_encode($guest['attended']) : null,
             ];
@@ -83,6 +85,7 @@ class GuestController extends Controller
             'name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
             'category' => 'nullable|integer',
+            'group_id' => 'nullable|string|max:255|exists:groups,id',
             'status' => 'nullable|integer',
             'sosmed' => 'nullable|array',
             'attended' => 'nullable|array',
@@ -92,7 +95,7 @@ class GuestController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $data = $request->only(['invitation_id', 'code', 'address', 'category', 'status']);
+        $data = $request->only(['invitation_id', 'code', 'address', 'category', 'status', 'group_id']);
 
         if ($request->has('sosmed')) {
             $data['sosmed'] = json_encode($request->sosmed);
