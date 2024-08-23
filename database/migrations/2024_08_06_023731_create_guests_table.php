@@ -18,12 +18,11 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->integer('category')->nullable();
             $table->integer('status')->default(0);
-
             $table->json('sosmed')->nullable();
             $table->json('attended')->nullable();
             $table->timestamps();
 
-            $table->foreignUuid('invitationId')->index()->references('id')->on('invitations')->onDelete('cascade');
+            $table->foreignUuid('invitation_id')->references('id')->on('invitations')->onDelete('cascade');
         });
     }
 

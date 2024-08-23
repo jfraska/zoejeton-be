@@ -12,19 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('templates', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
-            $table->string('slug')->unique();
-            $table->string('parent')->nullable();
-            $table->string('thumbnail');
-            $table->integer('price');
-            $table->integer('discount')->nullable();
-            $table->string('category')->default('basic');
+            $table->string('slug');
+            $table->string('thumbnail')->nullable();
+            $table->integer('price')->default(0);
+            $table->integer('discount')->default(0);
+            $table->string('category')->nullable();
             $table->json('content');
             $table->json('color');
             $table->string('music');
-            $table->json('meta')->nullable();
-            $table->boolean('published')->default(false);
             $table->timestamps();
         });
     }

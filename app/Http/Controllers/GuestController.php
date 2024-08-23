@@ -25,7 +25,7 @@ class GuestController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            '*.invitationId' => 'required|string|max:255|exists:invitations,id',
+            '*.invitation_id' => 'required|string|max:255|exists:invitations,id',
             '*.name' => 'required|string|max:255',
             '*.code' => 'required|string|max:255',
             '*.address' => 'nullable|string|max:255',
@@ -43,14 +43,14 @@ class GuestController extends Controller
         foreach ($request->all() as $guest) {
             $guests[] = [
                 'id' =>  Str::orderedUuid(),
-                'invitationId' => $guest['invitationId'],
+                'invitation_id' => $guest['invitation_id'],
                 'name' => $guest['name'],
                 'code' => $guest['code'],
-                'address' => $guest['address'],
-                'category' => $guest['category'],
-                'status' => $guest['status'],
-                'sosmed' => json_encode($guest['sosmed'] ?? []),
-                'attended' => json_encode($guest['attended'] ?? []),
+                'address' => $guest['address'] ?? null,
+                'category' => $guest['category'] ?? null,
+                'status' => $guest['status'] ?? 0,
+                'sosmed' => isset($guest['sosmed']) ? json_encode($guest['sosmed']) : null,
+                'attended' => isset($guest['attended']) ? json_encode($guest['attended']) : null,
             ];
         }
 
@@ -73,12 +73,14 @@ class GuestController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+        $guest = $this->getData($id);
+
         $validator = Validator::make($request->all(), [
-            'invitationId' => 'required|string|max:255',
-            'code' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
+            'invitation_id' => 'nullable|string|max:255',
+            'code' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
             'category' => 'nullable|integer',
             'status' => 'nullable|integer',
@@ -90,15 +92,17 @@ class GuestController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $guest = $this->getData($request->id);
+        $data = $request->only(['invitation_id', 'code', 'address', 'category', 'status']);
 
-        $guest->invitationId = $request->invitationId;
-        $guest->code = $request->code;
-        $guest->address = $request->address;
-        $guest->category = $request->category;
-        $guest->status = $request->status;
-        $guest->sosmed = json_encode($request->sosmed ?? []);
-        $guest->attended = json_encode($request->attended ?? []);
+        if ($request->has('sosmed')) {
+            $data['sosmed'] = json_encode($request->sosmed);
+        }
+
+        if ($request->has('attended')) {
+            $data['attended'] = json_encode($request->attended);
+        }
+
+        $guest->fill($data);
         $guest->save();
 
         return $this->sendResponse($guest, 'Guest successfully updated.');
@@ -107,9 +111,9 @@ class GuestController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $guest = $this->getData($request->id);
+        $guest = $this->getData($id);
 
         $guest->delete();
 
@@ -118,6 +122,14 @@ class GuestController extends Controller
 
     protected function getData($id)
     {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255|exists:guests,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+        }
+
         $guest =  Guest::find($id);
 
         if ($guest == null) {

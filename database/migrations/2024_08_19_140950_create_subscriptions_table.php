@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->integer('guest')->default(50);
-            $table->integer('whatsapp')->default(50);
+            $table->integer('whatsapp')->default(0);
             $table->decimal('media', 10, 2)->default(10);
             $table->integer('guestbook')->default(0);
-            $table->json('template')->nullable();
+            $table->json('templates')->nullable();
             $table->boolean('fitur_premiun')->default(false);
             $table->boolean('custom_domain')->default(false);
             $table->timestamps();
 
-            $table->foreignUuid('invitationId')->references('id')->on('invitations')->onDelete('cascade');
+            $table->foreignUuid('invitation_id')->references('id')->on('invitations')->onDelete('cascade');
         });
     }
 

@@ -13,7 +13,7 @@ class Guest extends Model
     use HasFactory, HasUuids, Filterable, Sortable;
 
     protected $fillable = [
-        'invitationId',
+        'invitation_id',
         'code',
         'name',
         'status',
@@ -30,6 +30,6 @@ class Guest extends Model
 
     public function invitation()
     {
-        return $this->belongsTo(Invitation::class, 'invitationId', 'id');
+        return $this->belongsTo(Invitation::class);
     }
 }

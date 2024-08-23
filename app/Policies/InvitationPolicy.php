@@ -21,7 +21,7 @@ class InvitationPolicy
      */
     public function view(User $user, Invitation $invitation): bool
     {
-        //
+        return $user->id === $invitation->user_id;
     }
 
     /**

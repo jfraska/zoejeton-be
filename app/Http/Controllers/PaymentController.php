@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Midtrans\Config;
 use Midtrans\Notification;
 use Midtrans\Snap;
@@ -13,16 +16,39 @@ class PaymentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $payment = Payment::orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
+
+        return $this->sendResponseWithMeta($payment, 'get payment successfull');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created resource in storage.
      */
-    public function create()
+    public function store(Request $request, $id)
     {
+        $subscription = $this->getSubscription($id);
+
+        $validator = Validator::make($request->all(), [
+            'subscriptionId' => 'required|exists:subscriptions,id',
+            'desc' => 'nullable|string',
+            'total' => 'required|numeric|min:1',
+
+            'items' => 'nullable|array',
+            'items.*.id' => 'nullable|string',
+            'items.*.price' => 'nullable|numeric|min:1',
+            'items.*.quantity' => 'nullable|integer|min:1',
+            'items.*.name' => 'nullable|string',,
+
+            'enabled_payments' => 'nullable|array',
+            'enabled_payments.*' => 'string',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
         // Set Your server key
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         Config::$clientKey = env('MIDTRANS_CLIENT_KEY');
@@ -36,64 +62,46 @@ class PaymentController extends Controller
         // Enable 3D-Secure
         Config::$is3ds = true;
 
+        $payment = $subscription->payment()->create([
+            'userId' => Auth::id(),
+            'desc' => $request->desc,
+            'items' => $request->items,
+            'total' => $request->total,
+        ]);
 
-        // Required
+        dd($payment);
+
         $transaction_details = array(
-            'order_id' => rand(),
-            'gross_amount' => 94000, // no decimal allowed for creditcard
+            'order_id' => $payment->id,
+            'gross_amount' => $payment->total,
         );
 
-        // Optional
-        $item1_details = array(
-            'id' => 'a1',
-            'price' => 18000,
-            'quantity' => 3,
-            'name' => "Apple"
-        );
-
-        // Optional
-        $item2_details = array(
-            'id' => 'a2',
-            'price' => 20000,
-            'quantity' => 2,
-            'name' => "Orange"
-        );
-
-        // Optional
-        $item_details = array($item1_details, $item2_details);
-
-        // Optional
         $customer_details = array(
-            'first_name'    => "Andri",
-            'last_name'     => "Litani",
-            'email'         => "andri@litani.com",
-            'phone'         => "081122334455",
+            'first_name'    => $payment->user()->name,
+            'email'         => $payment->user()->email,
         );
-
-        // Optional, remove this to display all available payment methods
-        $enable_payments = array('credit_card', 'cimb_clicks', 'mandiri_clickpay', 'echannel');
 
         // Fill transaction details
         $transaction = array(
-            'enabled_payments' => $enable_payments,
+            'enabled_payments' => $request->enable_payments,
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
-            'item_details' => $item_details,
+            'item_details' => $payment->items,
         );
 
         try {
             $snap_token = Snap::getSnapToken($transaction);
 
-            return $this->sendResponse($snap_token, 'Payment successfully created.');
+            return $this->sendResponse(["snap_token" => $snap_token], 'Payment successfully created.');
         } catch (\Exception $e) {
             return $this->sendError(self::UNPROCESSABLE, null, $e->getMessage());
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * callback notification.
      */
-    public function callback(Request $request)
+    public function callback()
     {
         // Set Your server key
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
@@ -148,18 +156,23 @@ class PaymentController extends Controller
             $message = "Payment using " . $type . " has been canceled.";
         }
 
-        return $this->sendResponse([
-            'order_id' => $order_id,
-            'status' => $transaction,
-        ], $message);
+        $payment = $this->getData($order_id);
+
+        $payment->status = $transaction;
+        $payment->method = $type;
+        $payment->save();
+
+        return $this->respondWithMessage($message);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Payment $payment)
+    public function show($id)
     {
-        //
+        $payment = $this->getData($id);
+
+        return $this->sendResponse($payment, 'Payment successfully loaded.');
     }
 
     /**
@@ -184,5 +197,43 @@ class PaymentController extends Controller
     public function destroy(Payment $payment)
     {
         //
+    }
+
+    protected function getSubscription($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255|exists:subscriptions,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+        }
+
+        $subscription =  Subscription::find($id);
+
+        if ($subscription == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $subscription;
+    }
+
+    protected function getData($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255|exists:payments,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+        }
+
+        $payment =  Payment::find($id);
+
+        if ($payment == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $payment;
     }
 }

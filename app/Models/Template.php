@@ -2,24 +2,26 @@
 
 namespace App\Models;
 
+use Abbasudo\Purity\Traits\Filterable;
+use Abbasudo\Purity\Traits\Sortable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Template extends Model
 {
+    use HasFactory, HasUuids, Filterable, Sortable;
+
     protected $fillable = [
         'title',
         'slug',
         'category',
-        'parent',
         'thumbnail',
         'price',
         'discount',
-        'published',
         'content',
         'color',
         'music',
-        'meta',
     ];
 
     protected $guarded = [];
@@ -27,11 +29,10 @@ class Template extends Model
     protected $casts = [
         'content' => 'array',
         'color' => 'array',
-        'meta' => 'array',
     ];
 
-    public function invitations()
+    public function invitation()
     {
-        return $this->hasMany(Invitation::class, 'templateId', 'id');
+        return $this->hasMany(Invitation::class);
     }
 }

@@ -13,7 +13,7 @@ class TemplateController extends Controller
      */
     public function index(Request $request)
     {
-        $template = Template::orderBy('created_at', 'desc')
+        $template = Template::filter()->sort()->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($template, 'get template successfull');
@@ -26,17 +26,14 @@ class TemplateController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'thumbnail' => 'required|string|max:255',
-            'price' => 'required|integer',
-            'category' => 'required|string|max:255',
-            'music' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:templates',
-            'parent' => 'nullable|string|max:255',
+            'slug' => 'required|string|max:255',
+            'thumbnail' => 'nullable|string|max:255',
+            'price' => 'nullable|integer',
+            'category' => 'nullable|string|max:255',
             'discount' => 'nullable|integer',
             'content' => 'required|array',
             'color' => 'required|array',
-            'meta' => 'nullable|json',
-            'published' => 'required|boolean',
+            'music' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -46,16 +43,13 @@ class TemplateController extends Controller
         $template = Template::create([
             'title' => $request->title,
             'slug' => $request->slug,
-            'parent' => $request->parent,
-            'thumbnail' => $request->thumbnail,
-            'price' => $request->price,
-            'discount' => $request->discount,
-            'category' => $request->category,
+            'thumbnail' => $request->thumbnail ?? null,
+            'price' => $request->price ?? null,
+            'discount' => $request->discount ?? null,
+            'category' => $request->category ?? null,
             'content' => $request->content,
             'color' => $request->color,
             'music' => $request->music,
-            'meta' => $request->meta,
-            'published' => $request->published,
         ]);
 
         return $this->sendResponse($template, 'Invitation successfully created.');
@@ -64,13 +58,9 @@ class TemplateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($slug)
+    public function show($id)
     {
-        $template = $this->getData($slug);
-
-        if ($template == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        $template = $this->getData($id);
 
         return $this->sendResponse($template, 'Template successfully loaded.');
     }
@@ -78,42 +68,42 @@ class TemplateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+
+        $template = $this->getData($id);
+
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'thumbnail' => 'required|string|max:255',
-            'price' => 'required|integer',
-            'category' => 'required|string|max:255',
-            'music' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
-            'parent' => 'nullable|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'slug' => 'nullable|string|max:255',
+            'thumbnail' => 'nullable|string|max:255',
+            'price' => 'nullable|integer',
             'discount' => 'nullable|integer',
-            'content' => 'required|array',
-            'color' => 'required|array',
-            // 'meta' => 'nullable|json',
-            'published' => 'required|boolean',
+            'category' => 'nullable|string|max:255',
+            'music' => 'nullable|string|max:255',
+            'content' => 'nullable|array',
+            'color' => 'nullable|array',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $template = $this->getData($request->id);
-
-        $template->update([
-            'title' => $request->title,
-            'parent' => $request->parent,
-            'thumbnail' => $request->thumbnail,
-            'price' => $request->price,
-            'discount' => $request->discount,
-            'category' => $request->category,
-            'content' => $request->content,
-            'color' => $request->color,
-            'music' => $request->music,
-            'meta' => $request->meta,
-            'published' => $request->published,
+        $data = $request->only([
+            'title',
+            'slug',
+            'thumbnail',
+            'price',
+            'discount',
+            'category',
+            'music',
+            'content',
+            'color',
         ]);
+
+        $template->fill($data);
+        $template->save();
+
 
         return $this->sendResponse($template, 'Template successfully updated.');
     }
@@ -128,6 +118,26 @@ class TemplateController extends Controller
 
     protected function getData($id)
     {
-        return Template::where('slug', $id)->orWhere('id', $id)->first();
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+        }
+
+        $template = Template::Where('id', $id)->first();
+
+        if ($template == null) {
+            $template = Template::where('slug', $id)
+                ->where('category', '!=', 'user')
+                ->first();
+
+            if ($template == null) {
+                return $this->sendError(self::UNPROCESSABLE, null);
+            }
+        }
+
+        return $template;
     }
 }

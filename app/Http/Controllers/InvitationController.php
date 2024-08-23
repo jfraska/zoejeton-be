@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class InvitationController extends Controller
@@ -25,9 +26,9 @@ class InvitationController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:255|unique:invitations',
-            'templateId' => 'nullable|integer|exists:templates,id',
+            'title' => 'required|string|max:20',
+            'subdomain' => 'required|string|max:20|unique:invitations',
+            'template_id' => 'nullable|string|exists:templates,id',
         ]);
 
         if ($validator->fails()) {
@@ -37,9 +38,11 @@ class InvitationController extends Controller
         $invitation = Invitation::create([
             'title' => $request->title,
             'subdomain' => $request->subdomain,
-            'userId' => Auth()->user()->id,
-            'templateId' => $request->templateId,
+            'user_id' => Auth::id(),
+            'template_id' => $request->template_id ?? null,
         ]);
+
+        $invitation->subscription()->create();
 
         return $this->sendResponse($invitation, 'Invitation successfully created.');
     }
@@ -51,9 +54,7 @@ class InvitationController extends Controller
     {
         $invitation = $this->getData($id);
 
-        if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        $invitation->load(['template', 'subscription']);
 
         return $this->sendResponse($invitation, 'Invitation successfully loaded.');
     }
@@ -61,27 +62,30 @@ class InvitationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+        $invitation = $this->getData($id);
+
         $validator = Validator::make($request->all(), [
-            'id' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:255|unique:invitations',
-            'templateId' => 'nullable|integer|exists:templates,id',
+            'title' => 'nullable|string|max:255',
+            'subdomain' => 'nullable|string|max:255|unique:invitations',
+            'meta' => 'nullable|array',
+            'published' => 'nullable|boolean',
+            'template_id' => 'integer|exists:templates,id',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $invitation = $this->getData($request->id);
+        $data = $request->only(['title', 'subdomain', 'template_id', 'published']);
 
-        $invitation->update([
-            'title' => $request->title,
-            'subdomain' => $request->subdomain,
-            'userId' => Auth()->user()->id,
-            'templateId' => $request->templateId,
-        ]);
+        if ($request->has('meta')) {
+            $data['meta'] = json_encode($request->meta);
+        }
+
+        $invitation->fill($data);
+        $invitation->save();
 
         return $this->sendResponse($invitation, 'Invitation successfully updated.');
     }
@@ -89,14 +93,32 @@ class InvitationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invitation $invitation)
+    public function destroy($id)
     {
-        //
+        $invitation = $this->getData($id);
+
+        $invitation->delete();
+
+        return $this->respondWithMessage('Invitation successfully deleted.');
     }
 
     protected function getData($id)
     {
 
-        return Invitation::with('payment')->where('id', $id)->first();
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255|exists:invitations,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+        }
+
+        $invitation = Invitation::find($id);
+
+        if ($invitation == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $invitation;
     }
 }

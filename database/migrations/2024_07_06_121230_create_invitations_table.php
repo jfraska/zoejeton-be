@@ -15,16 +15,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('title');
             $table->string('subdomain')->unique();
-            $table->unsignedBigInteger('userId');
-            $table->unsignedBigInteger('templateId')->unique()->nullable();
+            $table->json('meta')->nullable();
+            $table->boolean('published')->default(false);
             $table->timestamps();
 
-            // Definisikan foreign key dan relasi
-            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('templateId')->references('id')->on('templates')->onDelete('cascade');
-
-            // Buat index
-            $table->index(['templateId', 'userId']);
+            $table->foreignUuid('template_id')->references('id')->on('templates')->onDelete('cascade')->unique()->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

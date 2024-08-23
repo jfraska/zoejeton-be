@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TemplateSeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class TemplateSeeder extends Seeder
     {
         $templates = [
             [
+                'id' => Str::orderedUuid(),
                 'title' => 'Minimalis',
                 'slug' => 'minimalis',
                 'thumbnail' => 'thumbnail.jpg',
@@ -47,6 +49,7 @@ class TemplateSeeder extends Seeder
                 'music' => 'music.mp3',
             ],
             [
+                'id' => Str::orderedUuid(),
                 'title' => 'Nostalgia',
                 'slug' => 'nostalgia',
                 'thumbnail' => 'thumbnail.jpg',
@@ -61,7 +64,6 @@ class TemplateSeeder extends Seeder
                             'background' => ['7.heic'],
                         ],
                     ],
-                    // Tambahkan konten lainnya di sini
                 ]),
                 'color' => json_encode([
                     [
@@ -78,7 +80,6 @@ class TemplateSeeder extends Seeder
                 ]),
                 'music' => 'music.mp3',
             ],
-            // Tambahkan template lainnya di sini
         ];
 
         foreach ($templates as $template) {

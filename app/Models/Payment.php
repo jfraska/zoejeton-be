@@ -11,8 +11,10 @@ class Payment extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'invitationId',
+        'user_id',
+        'subscription_id',
         'desc',
+        'method',
         'items',
         'discount',
         'total',
@@ -25,8 +27,13 @@ class Payment extends Model
         'items' => 'array',
     ];
 
-    public function invitation()
+    public function subscription()
     {
-        return $this->belongsTo(Invitation::class, 'invitationId', 'id');
+        return $this->belongsTo(Subscription::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

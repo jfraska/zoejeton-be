@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TemplateController;
 
 /*
@@ -29,31 +31,43 @@ Route::get('/auth/{provider}/callback', [AuthController::class, 'handleProviderC
 Route::get('/auth/check', [AuthController::class, 'session'])->middleware('auth:api');
 
 
-Route::prefix('v1')->middleware('auth:api')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'invitation'], function () {
-        Route::get('/', [InvitationController::class, 'index']);
-        Route::post('/', [InvitationController::class, 'store']);
+        Route::get('/', [InvitationController::class, 'index'])->middleware('auth:api');
+        Route::post('/', [InvitationController::class, 'store'])->middleware('auth:api');
         Route::get('/{id}', [InvitationController::class, 'show']);
-        Route::patch('/', [InvitationController::class, 'update']);
+        Route::patch('/{id}', [InvitationController::class, 'update'])->middleware('auth:api');
+        Route::delete('/{id}', [InvitationController::class, 'destroy'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'template'], function () {
         Route::get('/', [TemplateController::class, 'index']);
-        Route::post('/', [TemplateController::class, 'store']);
-        Route::get('/{slug}', [TemplateController::class, 'show']);
-        Route::patch('/', [TemplateController::class, 'update']);
+        Route::post('/', [TemplateController::class, 'store'])->middleware('auth:api');
+        Route::get('/{id}', [TemplateController::class, 'show']);
+        Route::patch('/{id}', [TemplateController::class, 'update'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'guest'], function () {
-        Route::get('/', [GuestController::class, 'index']);
-        Route::post('/', [GuestController::class, 'store']);
-        Route::get('/{slug}', [GuestController::class, 'show']);
-        Route::patch('/', [GuestController::class, 'update']);
-        Route::delete('/', [GuestController::class, 'destroy']);
+        Route::get('/', [GuestController::class, 'index'])->middleware('auth:api');
+        Route::get('/{id}', [GuestController::class, 'show']);
+        Route::post('/', [GuestController::class, 'store'])->middleware('auth:api');
+        Route::patch('/{id}', [GuestController::class, 'update'])->middleware('auth:api');
+        Route::delete('/{id}', [GuestController::class, 'destroy'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'payment'], function () {
-        Route::get('/', [PaymentController::class, 'index']);
-        Route::post('/', [PaymentController::class, 'create']);
-        Route::post('/callback', [PaymentController::class, 'callback']);
-        Route::patch('/', [PaymentController::class, 'update']);
-        Route::delete('/', [PaymentController::class, 'destroy']);
+        Route::get('/', [PaymentController::class, 'index'])->middleware('auth:api');
+        Route::get('/{id}', [PaymentController::class, 'show'])->middleware('auth:api');
+        Route::post('/{id}', [PaymentController::class, 'store'])->middleware('auth:api');
+        Route::post('/callback', [PaymentController::class, 'callback'])->middleware('auth:api');
+        Route::delete('/', [PaymentController::class, 'destroy'])->middleware('auth:api');
+    });
+    Route::group(['prefix' => 'subscription'], function () {
+        Route::get('/', [SubscriptionController::class, 'index'])->middleware('auth:api');
+        Route::post('/', [SubscriptionController::class, 'store'])->middleware('auth:api');
+        Route::patch('/', [SubscriptionController::class, 'update'])->middleware('auth:api');
+        Route::delete('/', [SubscriptionController::class, 'destroy'])->middleware('auth:api');
+    });
+    Route::group(['prefix' => 'media'], function () {
+        Route::get('/{id}', [MediaController::class, 'index'])->middleware('auth:api');
+        Route::post('/{id}', [MediaController::class, 'store'])->middleware('auth:api');
+        Route::delete('/{id}', [MediaController::class, 'destroy'])->middleware('auth:api');
     });
 });
