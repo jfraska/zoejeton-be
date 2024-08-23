@@ -18,12 +18,16 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->integer('category')->nullable();
             $table->integer('status')->default(0);
+            $table->unsignedBigInteger('groupId');
 
             $table->json('sosmed')->nullable();
             $table->json('attended')->nullable();
             $table->timestamps();
 
             $table->foreignUuid('invitationId')->index()->references('id')->on('invitations')->onDelete('cascade');
+            $table->foreign('groupId')->references('id')->on('groups')->onDelete('cascade');
+
+            $table->index('groupId');
         });
     }
 

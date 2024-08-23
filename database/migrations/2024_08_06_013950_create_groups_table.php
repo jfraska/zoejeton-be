@@ -17,12 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('type');
             $table->string('schedule');
-            $table->string('guestId');
             $table->timestamps();
-
-            $table->foreign('guestId')->references('id')->on('guests')->onDelete('cascade');
-
-            $table->index('guestId');
         });
     }
 

@@ -6,7 +6,7 @@ use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class GroupsController extends Controller
+class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class GroupsController extends Controller
     public function index(Request $request)
     {
         $group = Group::orderBy('created_at', 'desc')
-            ->cursorPaginate($request->input('per_page', 15));
+            ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($group, 'get group successfull');
     }
@@ -29,26 +29,18 @@ class GroupsController extends Controller
             'description' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'schedule' => 'required|string|max:255',
-            'guestId' => 'required|string|max:255|unique:guests',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $groups = [];
-        foreach ($request->all() as $group) {
-            $groups[] = [
-                'name' => $group['name'],
-                'description' => $group['description'],
-                'type' => $group['type'],
-                'schedule' => $group['schedule'],
-                'guestId' => $group['guestId'],
-            ];
-        }
-
-        // Insert all guests at once
-        Group::insert($groups);
+        $group = Group::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'type' => $request->type,
+            'schedule' => $request->schedule,
+        ]);
 
         return $this->sendResponse($group, 'Group successfully created.');
     }
@@ -77,7 +69,6 @@ class GroupsController extends Controller
             'description' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'schedule' => 'required|string|max:255',
-            'guestId' => 'required|string|max:255|unique:guests',
         ]);
 
         if ($validator->fails()) {
@@ -91,7 +82,6 @@ class GroupsController extends Controller
             'description' => $request->description,
             'type' => $request->type,
             'schedule' => $request->schedule,
-            'guestId' => $request->guestId,
         ]);
 
         return $this->sendResponse($group, 'Group successfully updated.');

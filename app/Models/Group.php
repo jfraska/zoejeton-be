@@ -14,14 +14,8 @@ class Group extends Model
         'description',
         'type',
         'schedule',
-        'guestId',
     ];
 
     // Tentukan atribut yang tidak boleh diisi mass-assign
     protected $guarded = [];
-
-    public function guest()
-    {
-        return $this->belongsTo(Guest::class, 'guestId', 'id');
-    }
 }
