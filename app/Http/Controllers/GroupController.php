@@ -52,37 +52,31 @@ class GroupController extends Controller
     {
         $group = $this->getData($id);
 
-        if ($group == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
-
         return $this->sendResponse($group, 'Group successfully loaded.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+        $group = $this->getData($id);
+
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
-            'schedule' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'schedule' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $group = $this->getData($request->id);
+        $data = $request->only(['name', 'description', 'type', 'schedule']);
 
-        $group->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'type' => $request->type,
-            'schedule' => $request->schedule,
-        ]);
+        $group->fill($data);
+        $group->save();
 
         return $this->sendResponse($group, 'Group successfully updated.');
     }
@@ -94,17 +88,23 @@ class GroupController extends Controller
     {
         $group = $this->getData($request->id);
 
-        if ($group == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
-
         $group->delete();
 
-        return $this->sendResponse($group ,'Group successfully deleted.');
+        return $this->respondWithMessage('Group successfully deleted.');
     }
 
     protected function getData($id)
     {
-        return Group::where('id', $id)->first();
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255|exists:groups,id',
+        ]);
+
+        $group = Group::find($id);
+
+        if ($group == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
+        return $group;
     }
 }

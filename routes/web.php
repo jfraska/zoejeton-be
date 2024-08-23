@@ -59,13 +59,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [PaymentController::class, 'show'])->middleware('auth:api');
         Route::post('/{id}', [PaymentController::class, 'store'])->middleware('auth:api');
         Route::post('/callback', [PaymentController::class, 'callback'])->middleware('auth:api');
-        Route::delete('/', [PaymentController::class, 'destroy'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'subscription'], function () {
         Route::get('/', [SubscriptionController::class, 'index'])->middleware('auth:api');
+        Route::get('/{id}', [SubscriptionController::class, 'index'])->middleware('auth:api');
         Route::post('/', [SubscriptionController::class, 'store'])->middleware('auth:api');
-        Route::patch('/', [SubscriptionController::class, 'update'])->middleware('auth:api');
-        Route::delete('/', [SubscriptionController::class, 'destroy'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'media'], function () {
         Route::get('/{id}', [MediaController::class, 'index'])->middleware('auth:api');
@@ -73,10 +71,10 @@ Route::prefix('v1')->group(function () {
         Route::delete('/{id}', [MediaController::class, 'destroy'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'group'], function () {
-        Route::get('/', [GroupController::class, 'index']);
-        Route::post('/', [GroupController::class, 'store']);
-        Route::get('/{slug}', [GroupController::class, 'show']);
-        Route::patch('/', [GroupController::class, 'update']);
-        Route::delete('/', [GroupController::class, 'destroy']);
+        Route::get('/', [GroupController::class, 'index'])->middleware('auth:api');
+        Route::post('/', [GroupController::class, 'store'])->middleware('auth:api');
+        Route::get('/{id}', [GroupController::class, 'show'])->middleware('auth:api');
+        Route::patch('/{id}', [GroupController::class, 'update'])->middleware('auth:api');
+        Route::delete('/{id}', [GroupController::class, 'destroy'])->middleware('auth:api');
     });
 });
