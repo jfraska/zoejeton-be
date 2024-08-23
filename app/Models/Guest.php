@@ -14,6 +14,7 @@ class Guest extends Model
 
     protected $fillable = [
         'invitation_id',
+        'group_id',
         'code',
         'name',
         'status',
@@ -31,5 +32,9 @@ class Guest extends Model
     public function invitation()
     {
         return $this->belongsTo(Invitation::class);
+    }
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
     }
 }

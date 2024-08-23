@@ -23,6 +23,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreignUuid('invitation_id')->references('id')->on('invitations')->onDelete('cascade');
+            $table->unsignedBigInteger('group_id');
+            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
         });
     }
 

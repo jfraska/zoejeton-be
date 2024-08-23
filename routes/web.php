@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\MediaController;
@@ -69,5 +71,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [MediaController::class, 'index'])->middleware('auth:api');
         Route::post('/{id}', [MediaController::class, 'store'])->middleware('auth:api');
         Route::delete('/{id}', [MediaController::class, 'destroy'])->middleware('auth:api');
+    });
+    Route::group(['prefix' => 'group'], function () {
+        Route::get('/', [GroupController::class, 'index']);
+        Route::post('/', [GroupController::class, 'store']);
+        Route::get('/{slug}', [GroupController::class, 'show']);
+        Route::patch('/', [GroupController::class, 'update']);
+        Route::delete('/', [GroupController::class, 'destroy']);
     });
 });
