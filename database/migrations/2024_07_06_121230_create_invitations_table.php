@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('published')->default(false);
             $table->timestamps();
 
-            $table->foreignUuid('template_id')->references('id')->on('templates')->onDelete('cascade')->unique()->nullable();
+            $table->foreignUuid('template_id')->nullable()->references('id')->on('templates')->onDelete('cascade')->unique();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

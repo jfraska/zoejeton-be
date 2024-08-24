@@ -89,7 +89,7 @@ class GuestSeeder extends Seeder
                 ]),
                 'created_at' => now(),
                 'updated_at' => now(),
-                'invitation_id' => 'uuid-of-invitation-4', // Replace with actual UUID from invitations table
+                'invitation_id' => 'uuid-of-invitation-2', // Replace with actual UUID from invitations table
                 'group_id' => 4, // Replace with actual ID from groups table
             ],
             [
@@ -108,8 +108,8 @@ class GuestSeeder extends Seeder
                 ]),
                 'created_at' => now(),
                 'updated_at' => now(),
-                'invitation_id' => 'uuid-of-invitation-5', // Replace with actual UUID from invitations table
-                'group_id' => 5, // Replace with actual ID from groups table
+                'invitation_id' => 'uuid-of-invitation-1', // Replace with actual UUID from invitations table
+                'group_id' => 2, // Replace with actual ID from groups table
             ]
         ];
 

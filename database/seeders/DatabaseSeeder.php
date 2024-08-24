@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             TemplateSeeder::class,
+            UserSeeder::class,
             InvitationSeeder::class,
             GroupSeeder::class,
             GuestSeeder::class,

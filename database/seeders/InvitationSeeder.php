@@ -16,7 +16,7 @@ class InvitationSeeder extends Seeder
     {
         $invitations = [
             [
-                'id' => (string) Str::uuid(),  // Generate a unique UUID
+                'id' => "uuid-of-invitation-1",  // Generate a unique UUID
                 'title' => 'Elegant Event',
                 'subdomain' => 'elegant-event',
                 'meta' => json_encode([
@@ -24,11 +24,10 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['wedding', 'elegance', 'invitation']
                 ]),
                 'published' => true,
-                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
-                'id' => (string) Str::uuid(),
+                'id' => "uuid-of-invitation-2",
                 'title' => 'Tropical Party',
                 'subdomain' => 'tropical-party',
                 'meta' => json_encode([
@@ -36,11 +35,10 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['party', 'tropical', 'invitation']
                 ]),
                 'published' => true,
-                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
-                'id' => (string) Str::uuid(),
+                'id' => "uuid-of-invitation-3",
                 'title' => 'Classic Ceremony',
                 'subdomain' => 'classic-ceremony',
                 'meta' => json_encode([
@@ -48,7 +46,6 @@ class InvitationSeeder extends Seeder
                     'keywords' => ['ceremony', 'classic', 'invitation']
                 ]),
                 'published' => false,
-                'template_id' => "null",  // Assuming no template ID is available
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ]
         ];
