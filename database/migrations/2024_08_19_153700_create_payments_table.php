@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('desc')->nullable();
             $table->string('method')->nullable();
             $table->json('items')->nullable();
-            $table->integer('discount');
+            $table->integer('discount')->default(0);
             $table->integer('total');
             $table->string('status');
             $table->timestamps();

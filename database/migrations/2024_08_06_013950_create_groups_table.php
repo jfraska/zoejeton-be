@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('schedule');
             $table->timestamps();
+
+            $table->foreignUuid('invitation_id')->references('id')->on('invitations')->onDelete('cascade');
         });
     }
 

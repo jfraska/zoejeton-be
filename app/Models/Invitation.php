@@ -7,6 +7,7 @@ use Abbasudo\Purity\Traits\Sortable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
@@ -50,6 +51,11 @@ class Invitation extends Model implements HasMedia
                     'image/png',     // PNG images
                 ]);
             });
+    }
+
+    public function scopeOwned($query)
+    {
+        $query->where('user_id', Auth::id());
     }
 
     public function subscription()

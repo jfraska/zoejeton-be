@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class InvitationPolicy
 {
@@ -13,7 +12,7 @@ class InvitationPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class InvitationPolicy
      */
     public function view(User $user, Invitation $invitation): bool
     {
-        return $user->id === $invitation->user_id;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class InvitationPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class InvitationPolicy
      */
     public function update(User $user, Invitation $invitation): bool
     {
-        //
+        return $user->id === $invitation->user_id;
     }
 
     /**
@@ -45,7 +44,7 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation): bool
     {
-        //
+        return $user->id === $invitation->user_id;
     }
 
     /**
@@ -53,7 +52,7 @@ class InvitationPolicy
      */
     public function restore(User $user, Invitation $invitation): bool
     {
-        //
+        return $user->id === $invitation->user_id;
     }
 
     /**
@@ -61,6 +60,6 @@ class InvitationPolicy
      */
     public function forceDelete(User $user, Invitation $invitation): bool
     {
-        //
+        return $user->id === $invitation->user_id;
     }
 }

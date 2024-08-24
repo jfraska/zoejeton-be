@@ -57,6 +57,7 @@ class MediaController extends Controller
         }
 
 
+
         $invitation->addMedia($request->file('filepond'))->toMediaCollection($request->type);
 
 

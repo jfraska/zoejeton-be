@@ -11,6 +11,7 @@ class Group extends Model
     use HasFactory, Filterable;
 
     protected $fillable = [
+        'invitation_id',
         'name',
         'description',
         'type',
@@ -18,4 +19,9 @@ class Group extends Model
     ];
 
     protected $guarded = [];
+
+    public function scopeOwnedByInvitation($query, $id)
+    {
+        $query->where('invitation_id', $id);
+    }
 }

@@ -18,7 +18,15 @@ class PaymentController extends Controller
      */
     public function index(Request $request)
     {
-        $payment = Payment::orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
+        $validator = Validator::make($request->all(), [
+            'subscription' => 'required|string|exists:subscriptions,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
+        $payment = Payment::ownedBySubscription($request->input('subscription'))->orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($payment, 'get payment successfull');
     }
@@ -31,7 +39,6 @@ class PaymentController extends Controller
         $subscription = $this->getSubscription($id);
 
         $validator = Validator::make($request->all(), [
-            'subscription_id' => 'required|exists:subscriptions,id',
             'desc' => 'nullable|string',
             'total' => 'required|numeric|min:1',
 
@@ -66,10 +73,11 @@ class PaymentController extends Controller
             'user_id' => Auth::id(),
             'desc' => $request->desc,
             'items' => $request->items,
+            'status' => "unpaid",
             'total' => $request->total,
         ]);
 
-        dd($payment);
+        $payment->load('user');
 
         $transaction_details = array(
             'order_id' => $payment->id,
@@ -77,8 +85,8 @@ class PaymentController extends Controller
         );
 
         $customer_details = array(
-            'first_name'    => $payment->user()->name,
-            'email'         => $payment->user()->email,
+            'first_name'    => $payment->user->name,
+            'email'         => $payment->user->email,
         );
 
         // Fill transaction details

@@ -14,7 +14,15 @@ class GuestController extends Controller
      */
     public function index(Request $request)
     {
-        $guest = Guest::filter()->sort()->with('group')->orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
+        $validator = Validator::make($request->all(), [
+            'invitation' => 'required|string|exists:invitations,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
+        $guest = Guest::ownedByInvitation($request->input('invitation'))->filter()->sort()->with('group')->orderBy('created_at', 'desc')->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($guest, 'get guest successfull');
     }
