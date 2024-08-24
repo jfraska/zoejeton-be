@@ -20,18 +20,15 @@ class GuestSeeder extends Seeder
                 'code' => 'GUEST001',
                 'name' => 'John Doe',
                 'address' => '123 Elm Street',
-                'category' => 1,
+                'category' => "VIP",
                 'status' => 1,
                 'sosmed' => json_encode([
-                    'facebook' => 'https://facebook.com/johndoe',
                     'instagram' => 'https://instagram.com/johndoe'
                 ]),
                 'attended' => json_encode([
                     'ceremony' => true,
                     'reception' => false
                 ]),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'invitation_id' => 'uuid-of-invitation-1', // Replace with actual UUID from invitations table
                 'group_id' => 1, // Replace with actual ID from groups table
             ],
@@ -40,17 +37,15 @@ class GuestSeeder extends Seeder
                 'code' => 'GUEST002',
                 'name' => 'Jane Smith',
                 'address' => '456 Oak Avenue',
-                'category' => 2,
+                'category' => "Reguler",
                 'status' => 0,
                 'sosmed' => json_encode([
-                    'twitter' => 'https://twitter.com/janesmith'
+                    'instagram' => 'https://instagram.com/janesmith'
                 ]),
                 'attended' => json_encode([
                     'ceremony' => false,
                     'reception' => false
                 ]),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'invitation_id' => 'uuid-of-invitation-2', // Replace with actual UUID from invitations table
                 'group_id' => 2, // Replace with actual ID from groups table
             ],
@@ -59,17 +54,15 @@ class GuestSeeder extends Seeder
                 'code' => 'GUEST003',
                 'name' => 'Michael Johnson',
                 'address' => '789 Pine Road',
-                'category' => 3,
+                'category' => "Reguler",
                 'status' => 1,
                 'sosmed' => json_encode([
-                    'linkedin' => 'https://linkedin.com/in/michaeljohnson'
+                    'instagram' => 'https://instagram.com/in/michaeljohnson'
                 ]),
                 'attended' => json_encode([
                     'ceremony' => true,
                     'reception' => true
                 ]),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'invitation_id' => 'uuid-of-invitation-3', // Replace with actual UUID from invitations table
                 'group_id' => 3, // Replace with actual ID from groups table
             ],
@@ -78,17 +71,15 @@ class GuestSeeder extends Seeder
                 'code' => 'GUEST004',
                 'name' => 'Emily Davis',
                 'address' => '101 Maple Lane',
-                'category' => 1,
+                'category' => "VIP",
                 'status' => 0,
                 'sosmed' => json_encode([
-                    'snapchat' => 'https://snapchat.com/add/emilydavis'
+                    'instagram' => 'https://instagram.com/add/emilydavis'
                 ]),
                 'attended' => json_encode([
                     'ceremony' => false,
                     'reception' => true
                 ]),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'invitation_id' => 'uuid-of-invitation-2', // Replace with actual UUID from invitations table
                 'group_id' => 4, // Replace with actual ID from groups table
             ],
@@ -97,17 +88,15 @@ class GuestSeeder extends Seeder
                 'code' => 'GUEST005',
                 'name' => 'Sarah Wilson',
                 'address' => '202 Birch Street',
-                'category' => 2,
+                'category' => "VIP",
                 'status' => 1,
                 'sosmed' => json_encode([
-                    'pinterest' => 'https://pinterest.com/sarahwilson'
+                    'instagram' => 'https://instagram.com/sarahwilson'
                 ]),
                 'attended' => json_encode([
                     'ceremony' => true,
                     'reception' => true
                 ]),
-                'created_at' => now(),
-                'updated_at' => now(),
                 'invitation_id' => 'uuid-of-invitation-1', // Replace with actual UUID from invitations table
                 'group_id' => 2, // Replace with actual ID from groups table
             ]

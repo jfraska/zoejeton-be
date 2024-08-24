@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('code');
             $table->string('name');
             $table->string('address')->nullable();
-            $table->integer('category')->nullable();
+            $table->string('category')->nullable();
             $table->integer('status')->default(0);
             $table->json('sosmed')->nullable();
             $table->json('attended')->nullable();
