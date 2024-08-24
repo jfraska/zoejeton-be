@@ -13,7 +13,7 @@ class GroupController extends Controller
      */
     public function index(Request $request)
     {
-        $group = Group::orderBy('created_at', 'desc')
+        $group = Group::filter()->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($group, 'get group successfull');

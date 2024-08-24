@@ -39,7 +39,7 @@ class PaymentController extends Controller
             'items.*.id' => 'nullable|string',
             'items.*.price' => 'nullable|numeric|min:1',
             'items.*.quantity' => 'nullable|integer|min:1',
-            'items.*.name' => 'nullable|string',,
+            'items.*.name' => 'nullable|string',
 
             'enabled_payments' => 'nullable|array',
             'enabled_payments.*' => 'string',
@@ -68,6 +68,8 @@ class PaymentController extends Controller
             'items' => $request->items,
             'total' => $request->total,
         ]);
+
+        dd($payment);
 
         $transaction_details = array(
             'order_id' => $payment->id,
