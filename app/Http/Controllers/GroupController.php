@@ -13,7 +13,15 @@ class GroupController extends Controller
      */
     public function index(Request $request)
     {
-        $group = Group::orderBy('created_at', 'desc')
+        $validator = Validator::make($request->all(), [
+            'invitation' => 'required|string|exists:invitations,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
+        }
+
+        $group = Group::ownedByInvitation($request->input('invitation'))->filter()->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($group, 'get group successfull');
@@ -29,6 +37,7 @@ class GroupController extends Controller
             'description' => 'required|string|max:255',
             'type' => 'required|string|max:255',
             'schedule' => 'required|string|max:255',
+            'invitation_id' => 'required|string|exists:invitations,id',
         ]);
 
         if ($validator->fails()) {
@@ -40,6 +49,7 @@ class GroupController extends Controller
             'description' => $request->description,
             'type' => $request->type,
             'schedule' => $request->schedule,
+            'invitation_id' => $request->invitation_id,
         ]);
 
         return $this->sendResponse($group, 'Group successfully created.');
@@ -67,13 +77,14 @@ class GroupController extends Controller
             'description' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
             'schedule' => 'nullable|string|max:255',
+            'invitation_id' => 'nullable|string|exists:invitations,id',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $data = $request->only(['name', 'description', 'type', 'schedule']);
+        $data = $request->only(['name', 'description', 'type', 'schedule', 'invitation_id']);
 
         $group->fill($data);
         $group->save();

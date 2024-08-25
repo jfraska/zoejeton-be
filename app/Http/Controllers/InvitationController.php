@@ -10,11 +10,19 @@ use Illuminate\Support\Facades\Validator;
 class InvitationController extends Controller
 {
     /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Invitation::class, 'invitation');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $invitation = Invitation::filter()->sort()->orderBy('created_at', 'desc')
+        $invitation = Invitation::owned()->filter()->sort()->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 15));
 
         return $this->sendResponseWithMeta($invitation, "get invitation successfull");

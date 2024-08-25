@@ -22,6 +22,11 @@ class Guest extends Model
         'attended',
     ];
 
+    public function scopeOwnedByInvitation($query, $id)
+    {
+        $query->where('invitation_id', $id);
+    }
+
     protected $guarded = [];
 
     protected $casts = [

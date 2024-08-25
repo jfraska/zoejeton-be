@@ -63,7 +63,6 @@ Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'subscription'], function () {
         Route::get('/', [SubscriptionController::class, 'index'])->middleware('auth:api');
         Route::get('/{id}', [SubscriptionController::class, 'index'])->middleware('auth:api');
-        Route::post('/', [SubscriptionController::class, 'store'])->middleware('auth:api');
     });
     Route::group(['prefix' => 'media'], function () {
         Route::get('/{id}', [MediaController::class, 'index'])->middleware('auth:api');

@@ -27,6 +27,11 @@ class Payment extends Model
         'items' => 'array',
     ];
 
+    public function scopeOwnedBySubscription($query, $id)
+    {
+        $query->where('subscription_id', $id);
+    }
+
     public function subscription()
     {
         return $this->belongsTo(Subscription::class);
