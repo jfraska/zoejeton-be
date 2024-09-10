@@ -38,6 +38,7 @@ jobs:
         docker push ${{ env.CI_REGISTRY_IMAGE }} --all-tags
 
   deploy-dev:
+    needs: build-dev
     if: github.ref == 'refs/heads/development'
     runs-on: ubuntu-latest
     steps:
@@ -67,6 +68,7 @@ jobs:
           "
 
   deploy-prod:
+    needs: build-prod
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
