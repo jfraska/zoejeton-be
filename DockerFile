@@ -24,8 +24,6 @@ RUN composer install \
 
 FROM php:${PHP_VERSION}-cli-buster
 
-ARG WWWUSER=1001
-ARG WWWGROUP=1001
 ARG TZ=UTC
 
 # Accepted values: app - horizon
@@ -244,8 +242,8 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 
 ###########################################
 
-RUN groupadd --force -g $WWWGROUP octane \
-    && useradd -ms /bin/bash --no-log-init --no-user-group -g $WWWGROUP -u $WWWUSER octane
+RUN groupadd octane \
+    && useradd -ms /bin/bash -g octane octane
 
 RUN apt-get clean \
     && docker-php-source delete \

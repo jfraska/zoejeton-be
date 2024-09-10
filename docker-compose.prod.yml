@@ -1,7 +1,7 @@
 version: '3.8'
 
 networks:
-    backend-i-prod:
+    be-i-prod:
 
 services:
     nginx_backend_prod:
@@ -19,7 +19,7 @@ services:
             - php_backend_prod
             - postgres_backend_prod
         networks:
-            - backend-i-prod
+            - be-i-prod
     php_backend_prod:
         image: ${APP_IMAGE_PROD}:${APP_IMAGE_PROD_TAG}
         container_name: ${APP_NAME}_php
@@ -32,7 +32,7 @@ services:
         depends_on:
             - postgres_backend_prod
         networks:
-            - backend-i-prod
+            - be-i-prod
     postgres_backend_prod:
         image: postgres:14.2-alpine
         container_name: ${APP_NAME}_postgres
@@ -47,4 +47,4 @@ services:
             POSTGRES_DB: ${DB_DATABASE}
             POSTGRES_HOST_AUTH_METHOD: "trust"
         networks:
-            - backend-i-prod
+            - be-i-prod
