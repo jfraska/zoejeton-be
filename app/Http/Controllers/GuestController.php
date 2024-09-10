@@ -39,7 +39,7 @@ class GuestController extends Controller
             '*.address' => 'nullable|string|max:255',
             '*.category' => 'nullable|integer',
             '*.status' => 'nullable|integer',
-            '*.group_id' => 'nullable|string|max:255|exists:groups,id',
+            '*.group_id' => 'nullable|integer|exists:groups,id',
             '*.sosmed' => 'nullable|array',
             '*.attended' => 'nullable|array',
         ]);
@@ -93,7 +93,7 @@ class GuestController extends Controller
             'name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
             'category' => 'nullable|integer',
-            'group_id' => 'nullable|string|max:255|exists:groups,id',
+            'group_id' => 'nullable|integer|exists:groups,id',
             'status' => 'nullable|integer',
             'sosmed' => 'nullable|array',
             'attended' => 'nullable|array',
