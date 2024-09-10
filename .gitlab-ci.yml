@@ -1,0 +1,77 @@
+stages:
+  - test
+  - build-container
+  - deploy
+
+variables:
+  TAG_IMAGE: $CI_COMMIT_BRANCH-$CI_COMMIT_SHA
+
+run-test:
+  stage: test
+  script:
+    - cp .env.example .env
+
+docker-build:
+  image: docker:latest
+  stage: build-container
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -f DockerFile -t "$CI_REGISTRY_IMAGE:latest-dev" .
+    - docker push "$CI_REGISTRY_IMAGE:latest-dev"
+  when: on_success
+  allow_failure: false
+  only:
+    - develop
+
+deploy-dev:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_DEV=$CI_REGISTRY_IMAGE && export APP_IMAGE_DEV_TAG=latest-dev && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/Dev/backend && git pull origin develop && docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml pull php_backend_dev && docker-compose -f docker-compose.dev.yml up -d"
+  only:
+    - develop
+  when: on_success
+  allow_failure: false
+
+docker-build-prod:
+  image: docker:latest
+  stage: build-container
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -f DockerFile -t "$CI_REGISTRY_IMAGE:latest-main" .
+    - docker push "$CI_REGISTRY_IMAGE" --all-tags
+  when: manual
+  allow_failure: false
+  only:
+    - main
+
+deploy-prod:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_PROD=$CI_REGISTRY_IMAGE && export APP_IMAGE_PROD_TAG=latest-main && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/backend && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml pull php_backend_prod && docker-compose -f docker-compose.prod.yml up -d"
+  when: manual
+  allow_failure: false
+  only:
+    - main
+
