@@ -29,7 +29,7 @@ class GuestSeeder extends Seeder
                     'ceremony' => true,
                     'reception' => false
                 ]),
-                'invitation_id' => 'uuid-of-invitation-1', // Replace with actual UUID from invitations table
+                'invitation_id' => '550e8400-e29b-41d4-a716-446655440111', // Replace with actual UUID from invitations table
                 'group_id' => 1, // Replace with actual ID from groups table
             ],
             [
@@ -46,7 +46,7 @@ class GuestSeeder extends Seeder
                     'ceremony' => false,
                     'reception' => false
                 ]),
-                'invitation_id' => 'uuid-of-invitation-2', // Replace with actual UUID from invitations table
+                'invitation_id' => '550e8400-e29b-41d4-a716-446655440222', // Replace with actual UUID from invitations table
                 'group_id' => 2, // Replace with actual ID from groups table
             ],
             [
@@ -63,7 +63,7 @@ class GuestSeeder extends Seeder
                     'ceremony' => true,
                     'reception' => true
                 ]),
-                'invitation_id' => 'uuid-of-invitation-3', // Replace with actual UUID from invitations table
+                'invitation_id' => '550e8400-e29b-41d4-a716-446655440333', // Replace with actual UUID from invitations table
                 'group_id' => 3, // Replace with actual ID from groups table
             ],
             [
@@ -80,7 +80,7 @@ class GuestSeeder extends Seeder
                     'ceremony' => false,
                     'reception' => true
                 ]),
-                'invitation_id' => 'uuid-of-invitation-2', // Replace with actual UUID from invitations table
+                'invitation_id' => '550e8400-e29b-41d4-a716-446655440111', // Replace with actual UUID from invitations table
                 'group_id' => 4, // Replace with actual ID from groups table
             ],
             [
@@ -97,7 +97,7 @@ class GuestSeeder extends Seeder
                     'ceremony' => true,
                     'reception' => true
                 ]),
-                'invitation_id' => 'uuid-of-invitation-1', // Replace with actual UUID from invitations table
+                'invitation_id' => '550e8400-e29b-41d4-a716-446655440111', // Replace with actual UUID from invitations table
                 'group_id' => 2, // Replace with actual ID from groups table
             ]
         ];

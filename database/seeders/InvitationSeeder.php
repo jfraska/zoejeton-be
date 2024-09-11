@@ -16,7 +16,7 @@ class InvitationSeeder extends Seeder
     {
         $invitations = [
             [
-                'id' => "uuid-of-invitation-1",  // Generate a unique UUID
+                'id' => "550e8400-e29b-41d4-a716-446655440111",  // Generate a unique UUID
                 'title' => 'Elegant Event',
                 'subdomain' => 'elegant-event',
                 'meta' => json_encode([
@@ -27,7 +27,7 @@ class InvitationSeeder extends Seeder
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
-                'id' => "uuid-of-invitation-2",
+                'id' => "550e8400-e29b-41d4-a716-446655440222",
                 'title' => 'Tropical Party',
                 'subdomain' => 'tropical-party',
                 'meta' => json_encode([
@@ -38,7 +38,7 @@ class InvitationSeeder extends Seeder
                 'user_id' => 1,  // Assuming user with ID 1 exists
             ],
             [
-                'id' => "uuid-of-invitation-3",
+                'id' => "550e8400-e29b-41d4-a716-446655440333",
                 'title' => 'Classic Ceremony',
                 'subdomain' => 'classic-ceremony',
                 'meta' => json_encode([
