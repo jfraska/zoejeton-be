@@ -268,10 +268,10 @@ COPY deployment/octane/supervisord.${CONTAINER_MODE}.conf /etc/supervisor/conf.d
 COPY deployment/octane/php.ini /usr/local/etc/php/conf.d/octane.ini
 COPY deployment/octane/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
-USER octane
-
 RUN chmod +x deployment/octane/entrypoint.sh
 RUN cat deployment/octane/utilities.sh >> ~/.bashrc
+
+USER octane
 
 EXPOSE 9000
 
