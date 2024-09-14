@@ -20,7 +20,12 @@ class Authenticate extends Middleware
     {
         $this->authenticate($request, $guards);
 
-        return $next($request);
+        $response = $next($request);
+
+        // Menambahkan header Cross-Origin-Opener-Policy
+        $response->headers->set('Cross-Origin-Opener-Policy', 'unsafe-none'); // Atau 'unsafe-none' atau 'same-origin-allow-popups'
+
+        return $response;
     }
 
     /**
