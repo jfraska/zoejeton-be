@@ -131,7 +131,7 @@ class AuthController extends Controller
 
                 // $domain = env('FRONTEND_URL');
                 return "<script>
-                    window.opener.postMessage({ token: '$token' }, '*');
+                    window.opener.postMessage({ token: '$token' }, 'https://dashboard.zoejeton.com');
                     window.close();
                 </script>";
             }
