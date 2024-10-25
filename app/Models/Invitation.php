@@ -38,7 +38,7 @@ class Invitation extends Model implements HasMedia
 
     private array $filters = [
         '$eq',
-        '$in',
+        '$contains',
     ];
 
     public function registerMediaCollections(): void
