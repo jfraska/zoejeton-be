@@ -31,6 +31,16 @@ class Invitation extends Model implements HasMedia
         'meta' => 'array',
     ];
 
+    protected $filterFields = [
+        'title',
+        'subdomain',
+    ];
+
+    private array $filters = [
+        '$eq',
+        '$in',
+    ];
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('templates')
