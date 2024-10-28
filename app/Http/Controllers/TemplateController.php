@@ -126,13 +126,9 @@ class TemplateController extends Controller
 
     protected function getData($id)
     {
-        $template = Template::find($id);
-
-        if ($template == null) {
-            $template = Template::where('slug', $id)
-                ->where('category', '!=', 'user')
-                ->first();
-        }
+        $template = Template::where('slug', $id)
+            ->where('category', '!=', 'user')
+            ->first();
 
         return $template;
     }
