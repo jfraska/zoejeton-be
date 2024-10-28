@@ -10,14 +10,6 @@ use Illuminate\Support\Facades\Validator;
 class InvitationController extends Controller
 {
     /**
-     * Create the controller instance.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(Invitation::class, 'invitation');
-    }
-
-    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -62,6 +54,10 @@ class InvitationController extends Controller
     {
         $invitation = $this->getData($id);
 
+        if ($invitation == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
         $invitation->load(['template', 'subscription']);
 
         return $this->sendResponse($invitation, 'Invitation successfully loaded.');
@@ -73,6 +69,10 @@ class InvitationController extends Controller
     public function update(Request $request, $id)
     {
         $invitation = $this->getData($id);
+
+        if ($invitation == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
 
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
@@ -105,6 +105,10 @@ class InvitationController extends Controller
     {
         $invitation = $this->getData($id);
 
+        if ($invitation == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
         $invitation->delete();
 
         return $this->respondWithMessage('Invitation successfully deleted.');
@@ -112,20 +116,7 @@ class InvitationController extends Controller
 
     protected function getData($id)
     {
-
-        $validator = Validator::make(['id' => $id], [
-            'id' => 'required|string|max:255|exists:invitations,id',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
-        }
-
         $invitation = Invitation::find($id);
-
-        if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
 
         return $invitation;
     }

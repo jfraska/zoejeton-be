@@ -36,8 +36,8 @@ Route::get('/auth/check', [AuthController::class, 'session'])->middleware('auth:
 Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'invitation'], function () {
         Route::get('/', [InvitationController::class, 'index'])->middleware('auth:api');
-        Route::post('/', [InvitationController::class, 'store'])->middleware('auth:api');
         Route::get('/{id}', [InvitationController::class, 'show']);
+        Route::post('/', [InvitationController::class, 'store'])->middleware('auth:api');
         Route::patch('/{id}', [InvitationController::class, 'update'])->middleware('auth:api');
         Route::delete('/{id}', [InvitationController::class, 'destroy'])->middleware('auth:api');
     });

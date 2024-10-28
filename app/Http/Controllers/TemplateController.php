@@ -62,6 +62,10 @@ class TemplateController extends Controller
     {
         $template = $this->getData($id);
 
+        if ($template == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
         return $this->sendResponse($template, 'Template successfully loaded.');
     }
 
@@ -72,6 +76,10 @@ class TemplateController extends Controller
     {
 
         $template = $this->getData($id);
+
+        if ($template == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
 
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
@@ -118,24 +126,12 @@ class TemplateController extends Controller
 
     protected function getData($id)
     {
-        $validator = Validator::make(['id' => $id], [
-            'id' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
-        }
-
         $template = Template::Where('id', $id)->first();
 
         if ($template == null) {
             $template = Template::where('slug', $id)
                 ->where('category', '!=', 'user')
                 ->first();
-
-            if ($template == null) {
-                return $this->sendError(self::UNPROCESSABLE, null);
-            }
         }
 
         return $template;
