@@ -130,11 +130,11 @@ class AuthController extends Controller
 
                 $state = request()->input('state');
 
-                if ($state === 'dashboard') {
-                    return redirect('https://dashboard.zoejeton.com?access_token=' . $token);
+                if ($state === 'mobile') {
+                    return redirect('https://zoejeton.com?access_token=' . $token);
                 }
 
-                return redirect('https://zoejeton.com?access_token=' . $token);
+                return redirect('https://zoejeton.com/api/auth/callback?state=' . $state . '&access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
