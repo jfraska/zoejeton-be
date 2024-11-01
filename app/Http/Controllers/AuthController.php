@@ -102,7 +102,7 @@ class AuthController extends Controller
             return $this->sendError(self::NOT_FOUND);
         }
 
-        $state = request()->input('state', 'dashboard');
+        $state = request()->input('state');
 
         $success['provider_redirect'] = Socialite::driver($provider)->stateless()->with(['state' => $state])->redirect()->getTargetUrl();
 
@@ -131,10 +131,10 @@ class AuthController extends Controller
                 $state = request()->input('state');
 
                 if ($state === 'mobile') {
-                    return redirect('https://zoejeton.com?access_token=' . $token);
+                    return redirect('http://zoejeton.com?access_token=' . $token);
                 }
 
-                return redirect('https://zoejeton.com/api/auth/callback?state=' . $state . '&access_token=' . $token);
+                return redirect('http://' . $state . '/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
