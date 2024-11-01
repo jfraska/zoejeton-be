@@ -96,13 +96,17 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function redirectToProvider($provider)
+    public function redirectToProvider(Request $request, $provider)
     {
+        $redirectUrl = $request->input('redirect_url', 'https://zoejeton.com');
+
         if (!in_array($provider, self::PROVIDERS)) {
             return $this->sendError(self::NOT_FOUND);
         }
 
         $success['provider_redirect'] = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
+
+        session(['redirect_url' => $redirectUrl]);
 
         return $this->sendResponse($success, "Provider '" . $provider . "' redirect url.");
     }
@@ -126,14 +130,14 @@ class AuthController extends Controller
 
                 $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
 
-                // return $this->respondWithToken($token);
-                //return redirect('https://my-frontend-domain.com/dashboard?access_token='.$token);
+                $redirectUrl = session('redirect_url', 'https://zoejeton.com');
 
-                // $domain = env('FRONTEND_URL');
-                return "<script>
-                    window.opener.postMessage({ token: '$token' }, '*');
-                    window.close();
-                </script>";
+                return redirect('https://' . $redirectUrl . '?access_token=' . $token);
+
+                // return "<script>
+                //     window.opener.postMessage({ token: '$token' }, '*');
+                //     window.close();
+                // </script>";
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
