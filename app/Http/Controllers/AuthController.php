@@ -98,11 +98,11 @@ class AuthController extends Controller
      */
     public function redirectToProvider(Request $request, $provider)
     {
-        $redirectUrl = $request->input('redirect_url', 'https://zoejeton.com');
-
         if (!in_array($provider, self::PROVIDERS)) {
             return $this->sendError(self::NOT_FOUND);
         }
+
+        $redirectUrl = $request->input('redirect_url', 'zoejeton.com');
 
         $success['provider_redirect'] = Socialite::driver($provider)->stateless()->redirect()->getTargetUrl();
 
@@ -130,7 +130,7 @@ class AuthController extends Controller
 
                 $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
 
-                $redirectUrl = session('redirect_url', 'https://zoejeton.com');
+                $redirectUrl = session('redirect_url', 'zoejeton.com');
 
                 return redirect('https://' . $redirectUrl . '?access_token=' . $token);
 
