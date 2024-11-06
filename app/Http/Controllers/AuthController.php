@@ -103,8 +103,9 @@ class AuthController extends Controller
         }
 
         $state = request()->input('state');
+        $app = request()->input('app');
 
-        $success['provider_redirect'] = Socialite::driver($provider)->stateless()->with(['state' => $state])->redirect()->getTargetUrl();
+        $success['provider_redirect'] = Socialite::driver($provider)->stateless()->with(['state' => $state, 'app' => $app])->redirect()->getTargetUrl();
 
         return $this->sendResponse($success, "Provider '" . $provider . "' redirect url.");
     }
@@ -138,9 +139,11 @@ class AuthController extends Controller
 
                 if ($app === "local") {
                     return redirect('http://' . $state . '.localhost:3000/api/auth/callback?access_token=' . $token);
+                } else if ($app === "development") {
+                    return redirect('http://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
                 }
 
-                return redirect('http://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
+                return redirect('https://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
