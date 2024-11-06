@@ -134,7 +134,7 @@ class AuthController extends Controller
                     return redirect('http://zoejeton.com?access_token=' . $token);
                 }
 
-                return redirect('http://' . $state . '/api/auth/callback?access_token=' . $token);
+                return redirect('http://' . $state . '.localhost:3000/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
