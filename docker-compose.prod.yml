@@ -29,7 +29,6 @@ services:
             - ~/Program/backend/.env:/var/www/html/.env:rw
         environment:
             DB_HOST: postgres_backend_prod
-            FRONTEND_URL: ${FRONTEND_URL}
         depends_on:
             - postgres_backend_prod
         networks:
