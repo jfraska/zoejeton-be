@@ -21,14 +21,14 @@ services:
         networks:
             - be-i-prod
     php_backend_prod:
-        image: ${APP_IMAGE_PROD}:${APP_IMAGE_PROD_TAG}
+        build:
+          context: .
+          dockerfile: DockerFile
         container_name: ${APP_NAME}_php
         restart: unless-stopped
         volumes:
             - ~/Program/backend/storage:/var/www/html/storage:rw
-            # - ~/Program/backend/.env:/var/www/html/.env:rw
-        env_file:
-            - .env
+        env_file: .env
         environment:
             DB_HOST: postgres_backend_prod
         depends_on:
