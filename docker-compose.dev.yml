@@ -26,7 +26,9 @@ services:
         restart: unless-stopped
         volumes:
             - ~/Program/Dev/backend/storage:/var/www/html/storage:rw
-            - ~/Program/Dev/backend/.env:/var/www/html/.env:rw
+            # - ~/Program/Dev/backend/.env:/var/www/html/.env:rw
+        env_file:
+        - ./.env
         environment:
             DB_HOST: postgres_backend_dev
         depends_on:
