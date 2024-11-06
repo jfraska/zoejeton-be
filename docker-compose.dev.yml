@@ -28,7 +28,7 @@ services:
             - ~/Program/Dev/backend/storage:/var/www/html/storage:rw
             - ~/Program/Dev/backend/.env:/var/www/html/.env:rw
         environment:
-            DB_HOST: postgres_backend_prod
+            DB_HOST: postgres_backend_dev
         depends_on:
             - postgres_backend_dev
         networks:
