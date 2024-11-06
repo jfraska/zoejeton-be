@@ -129,12 +129,18 @@ class AuthController extends Controller
                 $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
 
                 $state = request()->input('state');
+                $domain = env('FRONTEND_URL');
+                $env = env('APP_ENV');
 
                 if ($state === 'mobile') {
-                    return redirect('http://zoejeton.com?access_token=' . $token);
+                    return redirect('https://zoejeton.com?access_token=' . $token);
                 }
 
-                return redirect('https://' . $state . '.zoejeton.com/api/auth/callback?access_token=' . $token);
+                if ($env === "local") {
+                    return redirect('http://' . $state . '.localhost:3000/api/auth/callback?access_token=' . $token);
+                }
+
+                return redirect('https://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
