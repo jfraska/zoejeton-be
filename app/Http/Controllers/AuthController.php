@@ -102,9 +102,9 @@ class AuthController extends Controller
             return $this->sendError(self::NOT_FOUND);
         }
 
-        $state = request()->input('state');
+        $app = request()->input('app');
 
-        $success['provider_redirect'] = Socialite::driver($provider)->stateless()->with(['state' => $state])->redirect()->getTargetUrl();
+        $success['provider_redirect'] = Socialite::driver($provider)->stateless()->with(['app' => $app])->redirect()->getTargetUrl();
 
         return $this->sendResponse($success, "Provider '" . $provider . "' redirect url.");
     }
@@ -128,13 +128,13 @@ class AuthController extends Controller
 
                 $token = $user->createToken(env('API_AUTH_TOKEN_PASSPORT_SOCIAL'))->accessToken;
 
-                $state = request()->input('state');
+                $app = request()->input('app');
 
-                if ($state === 'mobile') {
+                if ($app === 'mobile') {
                     return redirect('https://zoejeton.com?access_token=' . $token);
                 }
 
-                return redirect('http://' . $state . '/api/auth/callback?access_token=' . $token);
+                return redirect('http://' . $app . '/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
