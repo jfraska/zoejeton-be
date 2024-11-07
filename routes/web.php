@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GreetingController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\GuestController;
@@ -75,5 +76,13 @@ Route::prefix('v1')->group(function () {
         Route::get('/{id}', [GroupController::class, 'show'])->middleware('auth:api');
         Route::patch('/{id}', [GroupController::class, 'update'])->middleware('auth:api');
         Route::delete('/{id}', [GroupController::class, 'destroy'])->middleware('auth:api');
+    });
+
+    //additional
+    Route::group(['prefix' => 'greeting'], function () {
+        Route::get('/', [GreetingController::class, 'index']);
+        Route::post('/', [GreetingController::class, 'store']);
+        Route::patch('/{id}', [GreetingController::class, 'update']);
+        Route::delete('/{id}', [GreetingController::class, 'destroy']);
     });
 });
