@@ -21,7 +21,9 @@ services:
         networks:
             - be-i-dev
     php_backend_dev:
-        image: ${APP_IMAGE_DEV}:${APP_IMAGE_DEV_TAG}
+        build:
+          context: .
+          dockerfile: DockerFile
         container_name: ${APP_NAME}_php
         restart: unless-stopped
         volumes:
