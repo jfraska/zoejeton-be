@@ -133,17 +133,13 @@ class AuthController extends Controller
                 $app = request()->input('app');
                 $domain = env('FRONTEND_URL');
 
-                if ($state === 'mobile') {
+                if ($app === 'mobile') {
                     return redirect('https://zoejeton.com?access_token=' . $token);
-                }
-
-                if ($app === "local") {
+                } else if ($app === "local") {
                     return redirect('http://' . $state . '.localhost:3000/api/auth/callback?access_token=' . $token);
-                } else if ($app === "development") {
-                    return redirect('http://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
                 }
 
-                return redirect('https://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
+                return redirect('http://' . $state . '.' . $domain . '/api/auth/callback?access_token=' . $token);
             }
         } catch (Exception $e) {
             return $this->sendError(self::UNAUTHORIZED, null, ['error' => $e->getMessage()]);
