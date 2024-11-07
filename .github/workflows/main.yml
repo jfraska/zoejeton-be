@@ -27,7 +27,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
             cd ~/Program/Dev/backend
-            git pull
+            git pull origin development
             docker-compose -f docker-compose.dev.yml down
             docker-compose -f docker-compose.dev.yml up -d --build
           "
