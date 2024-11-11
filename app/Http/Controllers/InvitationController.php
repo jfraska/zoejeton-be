@@ -6,6 +6,7 @@ use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class InvitationController extends Controller
 {
@@ -117,8 +118,11 @@ class InvitationController extends Controller
     protected function getData($id)
     {
         $invitation = Invitation::where(function ($query) use ($id) {
-            $query->where('id', $id)
-                ->orWhere('subdomain', $id);
+            if (Str::isUuid($id)) {
+                $query->where('id', $id);
+            } else {
+                $query->where('subdomain', $id);
+            }
         })->first();
 
         return $invitation;
