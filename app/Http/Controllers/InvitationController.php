@@ -116,7 +116,10 @@ class InvitationController extends Controller
 
     protected function getData($id)
     {
-        $invitation = Invitation::find($id);
+        $invitation = Invitation::where(function ($query) use ($id) {
+            $query->where('id', $id)
+                ->orWhere('subdomain', $id);
+        })->first();
 
         return $invitation;
     }
