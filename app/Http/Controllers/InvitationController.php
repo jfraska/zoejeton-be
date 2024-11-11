@@ -90,7 +90,7 @@ class InvitationController extends Controller
         $data = $request->only(['title', 'subdomain', 'template_id', 'published']);
 
         if ($request->has('meta')) {
-            $data['meta'] = json_encode($request->meta);
+            $data['meta'] = $request->meta;
         }
 
         $invitation->fill($data);
