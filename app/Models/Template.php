@@ -31,6 +31,17 @@ class Template extends Model
         'color' => 'array',
     ];
 
+
+    protected $filterFields = [
+        'title',
+        'category',
+    ];
+
+    private array $filters = [
+        '$eq',
+        '$contains',
+    ];
+
     public function invitation()
     {
         return $this->hasMany(Invitation::class);
