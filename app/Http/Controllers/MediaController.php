@@ -13,7 +13,9 @@ class MediaController extends Controller
      */
     public function index(Request $request, $id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
             'type' => 'required|string'
@@ -45,7 +47,9 @@ class MediaController extends Controller
      */
     public function store(Request $request, $id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
             'filepond' => 'required|file|max:10240',
@@ -56,10 +60,7 @@ class MediaController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-
-
         $invitation->addMedia($request->file('filepond'))->toMediaCollection($request->type);
-
 
         return $this->sendResponse($invitation->getMedia($request->type), 'Media successfully uploaded.');
     }
@@ -93,7 +94,9 @@ class MediaController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
             'index' => 'required|integer',
@@ -113,20 +116,20 @@ class MediaController extends Controller
     protected function getData($id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => 'required|string|max:255|exists:invitations,id',
+            'id' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+            return array(null,  $this->sendError(self::VALIDATION_ERROR, null, $validator->errors()));
         }
 
         $invitation = Invitation::find($id);
 
         if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
+            return array(null, $this->sendError(self::UNPROCESSABLE, "Data Not Found"));
         }
 
-        return $invitation;
+        return array($invitation, null);
     }
 
     private function respondWithFile($file, $storage, $message)

@@ -60,11 +60,9 @@ class TemplateController extends Controller
      */
     public function show($id)
     {
-        $template = $this->getData($id);
+        list($template, $err) = $this->getData($id);
 
-        if ($template == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        if ($err != null) return $err;
 
         return $this->sendResponse($template, 'Template successfully loaded.');
     }
@@ -74,12 +72,9 @@ class TemplateController extends Controller
      */
     public function update(Request $request, $id)
     {
+        list($template, $err) = $this->getData($id);
 
-        $template = $this->getData($id);
-
-        if ($template == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
@@ -126,9 +121,21 @@ class TemplateController extends Controller
 
     protected function getData($id)
     {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return array(null,  $this->sendError(self::VALIDATION_ERROR, null, $validator->errors()));
+        }
+
         $template = Template::where('slug', $id)
             ->first();
 
-        return $template;
+        if ($template == null) {
+            return array(null, $this->sendError(self::UNPROCESSABLE, "Data Not Found"));
+        }
+
+        return array($template, null);
     }
 }

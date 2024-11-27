@@ -75,7 +75,9 @@ class GuestController extends Controller
      */
     public function show($id)
     {
-        $guest = $this->getData($id);
+        list($guest, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
 
         return $this->sendResponse($guest, 'Guest successfully loaded.');
     }
@@ -85,7 +87,10 @@ class GuestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $guest = $this->getData($id);
+        list($guest, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
+
 
         $validator = Validator::make($request->all(), [
             'invitation_id' => 'nullable|string|max:255',
@@ -124,7 +129,9 @@ class GuestController extends Controller
      */
     public function destroy($id)
     {
-        $guest = $this->getData($id);
+        list($guest, $err) = $this->getData($id);
+
+        if ($err != null) return $err;
 
         $guest->delete();
 
@@ -134,19 +141,19 @@ class GuestController extends Controller
     protected function getData($id)
     {
         $validator = Validator::make(['id' => $id], [
-            'id' => 'required|string|max:255|exists:guests,id',
+            'id' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
+            return array(null,  $this->sendError(self::VALIDATION_ERROR, null, $validator->errors()));
         }
 
         $guest =  Guest::find($id);
 
         if ($guest == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
+            return array(null, $this->sendError(self::UNPROCESSABLE, "Data Not Found"));
         }
 
-        return $guest;
+        return array($guest, null);
     }
 }

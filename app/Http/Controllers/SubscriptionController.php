@@ -33,6 +33,10 @@ class SubscriptionController extends Controller
     {
         $subscription = $this->getData($id);
 
+        if ($subscription == null) {
+            return $this->sendError(self::UNPROCESSABLE, null);
+        }
+
         return $this->sendResponse($subscription, 'subscription successfully loaded.');
     }
 
@@ -62,19 +66,7 @@ class SubscriptionController extends Controller
 
     protected function getData($id)
     {
-        $validator = Validator::make(['id' => $id], [
-            'id' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('VALIDATION_ERROR', null, $validator->errors());
-        }
-
         $subscription =  Subscription::where('invitation_id', $id)->orWhere('id', $id)->first();
-
-        if ($subscription == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
 
         return $subscription;
     }

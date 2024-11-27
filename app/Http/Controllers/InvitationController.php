@@ -53,11 +53,9 @@ class InvitationController extends Controller
      */
     public function show($id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
 
-        if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        if ($err != null) return $err;
 
         $invitation->load(['template', 'subscription']);
 
@@ -69,11 +67,9 @@ class InvitationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
 
-        if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
@@ -104,11 +100,9 @@ class InvitationController extends Controller
      */
     public function destroy($id)
     {
-        $invitation = $this->getData($id);
+        list($invitation, $err) = $this->getData($id);
 
-        if ($invitation == null) {
-            return $this->sendError(self::UNPROCESSABLE, null);
-        }
+        if ($err != null) return $err;
 
         $invitation->delete();
 
@@ -117,6 +111,14 @@ class InvitationController extends Controller
 
     protected function getData($id)
     {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return array(null,  $this->sendError(self::VALIDATION_ERROR, null, $validator->errors()));
+        }
+
         $invitation = Invitation::where(function ($query) use ($id) {
             if (Str::isUuid($id)) {
                 $query->where('id', $id);
@@ -125,6 +127,10 @@ class InvitationController extends Controller
             }
         })->first();
 
-        return $invitation;
+        if ($invitation == null) {
+            return array(null, $this->sendError(self::UNPROCESSABLE, "Data Not Found"));
+        }
+
+        return array($invitation, null);
     }
 }
