@@ -36,7 +36,7 @@ class MediaController extends Controller
                 'mime_type' => $media->mime_type,
                 'size' => $media->size / 1024 / 1024,
             ];
-            $totalSize += $media->size;
+            $totalSize += $media->size / 1024 / 1024;
         }
 
         return $this->respondWithFile($mediaData, $totalSize, "get Media successfull");
@@ -60,7 +60,7 @@ class MediaController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $invitation->addMedia($request->file('file'))->toMediaCollection($request->type);
+        $invitation->addMediaFromRequest('file')->toMediaCollection($request->type);
 
         return $this->sendResponse($invitation->getMedia($request->type), 'Media successfully uploaded.');
     }
