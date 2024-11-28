@@ -34,7 +34,7 @@ class MediaController extends Controller
             $mediaData[] = [
                 'url' => $media->getFullUrl(),
                 'mime_type' => $media->mime_type,
-                'size' => $media->size,
+                'size' => $media->size / 1024 / 1024,
             ];
             $totalSize += $media->size;
         }
