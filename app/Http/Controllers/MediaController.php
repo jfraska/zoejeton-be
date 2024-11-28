@@ -52,7 +52,7 @@ class MediaController extends Controller
         if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
-            'filepond' => 'required|file|max:10240',
+            'file' => 'required|file|max:10240',
             'type' => 'required|string'
         ]);
 
@@ -60,7 +60,7 @@ class MediaController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $invitation->addMedia($request->file('filepond'))->toMediaCollection($request->type);
+        $invitation->addMedia($request->file('file'))->toMediaCollection($request->type);
 
         return $this->sendResponse($invitation->getMedia($request->type), 'Media successfully uploaded.');
     }
