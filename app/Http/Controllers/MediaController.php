@@ -32,11 +32,13 @@ class MediaController extends Controller
 
         foreach ($mediaItems as $media) {
             $mediaData[] = [
+                'id' => $media->id,
+                'name' => $media->file_name,
                 'url' => $media->getFullUrl(),
                 'mime_type' => $media->mime_type,
-                'size' => $media->size / 1024 / 1024,
+                'size' => number_format($media->size / 1024 / 1024, 2),
             ];
-            $totalSize += $media->size / 1024 / 1024;
+            $totalSize += number_format($media->size / 1024 / 1024, 2);
         }
 
         return $this->respondWithFile($mediaData, $totalSize, "get Media successfull");
@@ -60,7 +62,10 @@ class MediaController extends Controller
             return $this->sendError(self::VALIDATION_ERROR, null, $validator->errors());
         }
 
-        $invitation->addMediaFromRequest('file')->toMediaCollection($request->type);
+        $file = $request->file('file');
+        $path = $file->store('temp');
+
+        $invitation->addMedia(storage_path("app/{$path}"))->toMediaCollection($request->type);
 
         return $this->sendResponse($invitation->getMedia($request->type), 'Media successfully uploaded.');
     }
