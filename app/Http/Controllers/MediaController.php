@@ -52,7 +52,7 @@ class MediaController extends Controller
         if ($err != null) return $err;
 
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|max:10240',
+            'file' => 'required|file|max:51200',
             'type' => 'required|string'
         ]);
 
