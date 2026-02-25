@@ -61,6 +61,7 @@ RUN apt-get update; \
           libssl-dev \
           libwebp-dev \
           libonig-dev \
+          libzip-dev zip unzip \
           libxml2 \
           libzstd1 \
           procps
