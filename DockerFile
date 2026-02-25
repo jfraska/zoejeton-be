@@ -47,16 +47,12 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 RUN apt-get update; \
     pecl -q channel-update pecl.php.net; \
     apt-get install -yqq --no-install-recommends --show-progress \
-          apt-utils \
-          gnupg \
           gosu \
           git \
           curl \
           libcurl4-openssl-dev \
           ca-certificates \
           supervisor \
-          libmemcached-dev \
-          libz-dev \
           libbrotli-dev \
           libpq-dev \
           libjpeg-dev \
@@ -65,11 +61,6 @@ RUN apt-get update; \
           libssl-dev \
           libwebp-dev \
           libonig-dev \
-          libzip-dev zip unzip \
-          libargon2-1 \
-          libidn2-0 \
-          libpcre2-8-0 \
-          libpcre2 \
           libxml2 \
           libzstd1 \
           procps
