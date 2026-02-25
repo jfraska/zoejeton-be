@@ -2,6 +2,7 @@ version: '3.8'
 
 networks:
     be-i-prod:
+        external: true
 
 services:
     nginx_backend_prod:

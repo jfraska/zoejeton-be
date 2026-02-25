@@ -2,6 +2,7 @@ version: '3.8'
 
 networks:
     be-i-dev:
+        external: true
 
 services:
     nginx_backend_dev:
