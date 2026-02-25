@@ -56,11 +56,11 @@ jobs:
 
       - name: Deploy to development
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
+          ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
             export APP_IMAGE_DEV=${{ env.CI_REGISTRY_IMAGE }}
             export APP_IMAGE_DEV_TAG=latest-dev
             echo ${{ secrets.CI_REGISTRY_PASSWORD }} | docker login ${{ env.CI_REGISTRY }} -u ${{ secrets.CI_REGISTRY_USER }} --password-stdin
-            cd ~/Program/Dev/backend
+            cd ~/Program/zoejeton/Dev/backend
             git pull
             docker-compose -f docker-compose.dev.yml down
             docker-compose -f docker-compose.dev.yml pull php_backend_dev
@@ -86,11 +86,11 @@ jobs:
 
       - name: Deploy to production
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
+          ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
             export APP_IMAGE_PROD=${{ env.CI_REGISTRY_IMAGE }}
             export APP_IMAGE_PROD_TAG=latest-main
             echo ${{ secrets.CI_REGISTRY_PASSWORD }} | docker login ${{ env.CI_REGISTRY }} -u ${{ secrets.CI_REGISTRY_USER }} --password-stdin
-            cd ~/Program/backend
+            cd ~/Program/zoejeton/backend
             git pull
             docker-compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml pull php_backend_prod
