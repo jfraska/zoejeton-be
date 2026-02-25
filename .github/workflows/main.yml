@@ -56,7 +56,7 @@ jobs:
 
       - name: Deploy to development
         run: |
-          ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
             export APP_IMAGE_DEV=${{ env.CI_REGISTRY_IMAGE }}
             export APP_IMAGE_DEV_TAG=latest-dev
             echo ${{ secrets.CI_REGISTRY_PASSWORD }} | docker login ${{ env.CI_REGISTRY }} -u ${{ secrets.CI_REGISTRY_USER }} --password-stdin
@@ -86,7 +86,7 @@ jobs:
 
       - name: Deploy to production
         run: |
-          ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
+          ssh -o StrictHostKeyChecking=no -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_ADDRESS }} "
             export APP_IMAGE_PROD=${{ env.CI_REGISTRY_IMAGE }}
             export APP_IMAGE_PROD_TAG=latest-main
             echo ${{ secrets.CI_REGISTRY_PASSWORD }} | docker login ${{ env.CI_REGISTRY }} -u ${{ secrets.CI_REGISTRY_USER }} --password-stdin
