@@ -45,7 +45,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 
 RUN apt-get update; \
-    apt-get upgrade -yqq; \
     pecl -q channel-update pecl.php.net; \
     apt-get install -yqq --no-install-recommends --show-progress \
           apt-utils \
@@ -65,13 +64,12 @@ RUN apt-get update; \
           libfreetype6-dev \
           libssl-dev \
           libwebp-dev \
-          libmcrypt-dev \
           libonig-dev \
           libzip-dev zip unzip \
           libargon2-1 \
           libidn2-0 \
           libpcre2-8-0 \
-          libpcre3 \
+          libpcre2 \
           libxml2 \
           libzstd1 \
           procps
