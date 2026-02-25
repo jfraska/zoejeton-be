@@ -239,7 +239,7 @@ RUN groupadd --force -g $WWWGROUP octane \
 RUN apt-get clean \
     && docker-php-source delete \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm /var/log/lastlog /var/log/faillog
+    && rm -f /var/log/lastlog /var/log/faillog
 
 COPY . .
 COPY --from=vendor /var/www/html/vendor vendor
