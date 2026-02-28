@@ -90,7 +90,7 @@ jobs:
             export APP_IMAGE_PROD=${{ env.CI_REGISTRY_IMAGE }}
             export APP_IMAGE_PROD_TAG=latest-main
             echo ${{ secrets.CI_REGISTRY_PASSWORD }} | docker login ${{ env.CI_REGISTRY }} -u ${{ secrets.CI_REGISTRY_USER }} --password-stdin
-            cd ~/Program/zoejeton/backend
+            cd /Program/zoejeton/backend
             git pull
             docker-compose -f docker-compose.prod.yml down
             docker-compose -f docker-compose.prod.yml pull php_backend_prod

@@ -2,6 +2,7 @@ version: '3.8'
 
 networks:
     be-i-prod:
+        external: true
 
 services:
     nginx_backend_prod:
@@ -13,8 +14,8 @@ services:
         links:
             - php_backend_prod
         volumes:
-            - ~/Program/zoejeton/backend/docker/nginx/site-prod.conf:/etc/nginx/conf.d/default.conf:rw
-            - ~/Program/zoejeton/backend/docker/logs/nginx:/var/logs/nginx:rw
+            - ./docker/nginx/site-prod.conf:/etc/nginx/conf.d/default.conf:rw
+            - ./docker/logs/nginx:/var/logs/nginx:rw
         depends_on:
             - php_backend_prod
             - postgres_backend_prod
@@ -25,7 +26,7 @@ services:
         container_name: ${APP_NAME}_php
         restart: unless-stopped
         volumes:
-            - ~/Program/zoejeton/backend/storage:/var/www/html/storage:rw
+            - ./storage:/var/www/html/storage:rw
         env_file: .env
         environment:
             DB_HOST: postgres_backend_prod
@@ -40,7 +41,7 @@ services:
         ports:
             - "5436:5432"
         volumes:
-            - ~/Program/zoejeton/backend/docker/postgres:/var/lib/postgresql/data
+            - ./docker/postgres:/var/lib/postgresql/data
         environment:
             POSTGRES_USER: ${DB_USERNAME}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
