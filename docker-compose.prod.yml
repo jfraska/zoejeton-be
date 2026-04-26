@@ -23,6 +23,13 @@ services:
     php_backend_prod:
         image: ${APP_IMAGE_PROD}:${APP_IMAGE_PROD_TAG}
         container_name: ${APP_NAME}_php
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 1G
+                reservations:
+                    memory: 128M 
         restart: unless-stopped
         volumes:
             - ./storage:/var/www/html/storage:rw
