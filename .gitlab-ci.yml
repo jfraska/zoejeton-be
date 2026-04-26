@@ -37,7 +37,7 @@ deploy-dev:
     - ssh-add ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_DEV=$CI_REGISTRY_IMAGE && export APP_IMAGE_DEV_TAG=latest-dev && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/Dev/backend && git pull origin develop && docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml pull php_backend_dev && docker-compose -f docker-compose.dev.yml up -d"
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_DEV=$CI_REGISTRY_IMAGE && export APP_IMAGE_DEV_TAG=latest-dev && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/Dev/backend && git pull origin develop && docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml pull php_backend_dev && docker compose -f docker-compose.dev.yml up -d"
   only:
     - develop
   when: on_success
@@ -69,7 +69,7 @@ deploy-prod:
     - ssh-add ~/.ssh/id_rsa
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_PROD=$CI_REGISTRY_IMAGE && export APP_IMAGE_PROD_TAG=latest-main && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/backend && git pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml pull php_backend_prod && docker-compose -f docker-compose.prod.yml up -d"
+    - ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDRESS} "export APP_IMAGE_PROD=$CI_REGISTRY_IMAGE && export APP_IMAGE_PROD_TAG=latest-main && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && cd ~/Program/backend && git pull && docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml pull php_backend_prod && docker compose -f docker-compose.prod.yml up -d"
   when: manual
   allow_failure: false
   only:
